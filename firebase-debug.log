@@ -1,0 +1,25 @@
+[debug] [2019-01-02T07:20:39.352Z] ----------------------------------------------------------------------
+[debug] [2019-01-02T07:20:39.358Z] Command:       /usr/local/bin/node /usr/local/bin/firebase serve --only hosting
+[debug] [2019-01-02T07:20:39.359Z] CLI Version:   6.2.2
+[debug] [2019-01-02T07:20:39.359Z] Platform:      darwin
+[debug] [2019-01-02T07:20:39.359Z] Node Version:  v8.11.3
+[debug] [2019-01-02T07:20:39.361Z] Time:          Tue Jan 01 2019 23:20:39 GMT-0800 (PST)
+[debug] [2019-01-02T07:20:39.361Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2019-01-02T07:20:39.377Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2019-01-02T07:20:39.378Z] > authorizing via signed-in user
+[debug] [2019-01-02T07:20:39.378Z] [iam] checking project dj-bullet-journal for permissions ["firebase.projects.get"]
+[debug] [2019-01-02T07:20:39.381Z] >>> HTTP REQUEST POST https://cloudresourcemanager.googleapis.com/v1/projects/dj-bullet-journal:testIamPermissions  
+
+[debug] [2019-01-02T07:20:39.760Z] <<< HTTP RESPONSE 200
+[debug] [2019-01-02T07:20:39.762Z] >>> HTTP REQUEST GET https://cloudresourcemanager.googleapis.com/v1/projects/dj-bullet-journal  
+ 
+[debug] [2019-01-02T07:20:40.028Z] <<< HTTP RESPONSE 200
+[info] 
+[info] === Serving from '/Users/davidjay/Projects/bulletjournal'...
+[info] 
+[debug] [2019-01-02T07:20:40.030Z] >>> HTTP REQUEST GET https://mobilesdk-pa.googleapis.com/v1/projects/739960274468/clients/_:getWebAppConfig  
+ 
+[debug] [2019-01-02T07:20:40.257Z] <<< HTTP RESPONSE 200
+[info] i  hosting: Serving hosting files from: web/build
+[info] ✔  hosting: Local server: http://localhost:5000
