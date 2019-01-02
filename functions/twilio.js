@@ -1,17 +1,11 @@
-const twilio = require('twilio')(accountSid, authToken);
+const functions = require('firebase-functions');
+const twilioClient = require('twilio')(functions.config().twilio.sid, functions.config().twilio.key);
 
-const twilioSid = process.env.TWILIO_SID
-const twilioKey = process.env.TWILIO_KEY
-const twilioNumber = process.env.TWILIO_NUMBER
-
-const twilioClient = twilio(twilioSid, twilioKey)
-admin.initializeApp();
-
-const twilioUrl = `https://api.twilio.com/2010-04-01/Accounts/${twilioSid}/Messages.json`
+const twilioUrl = `https://api.twilio.com/2010-04-01/Accounts/${functions.config().twilio.sid}/Messages.json`;
 
 module.exports.default = (to, body) => twilioClient.messages
       .create({
          body,
-         from: twilioNumber,
+         from: functions.config().twilio.number,
          to
        })
