@@ -1,40 +1,39 @@
 import React, { Component } from 'react'
-import { BrowserRouter as Router, Route } from "react-router-dom"
+import { BrowserRouter as Router, Route } from 'react-router-dom'
 import Landing from './Landing'
+import Auth from './Auth'
 import firebase from 'firebase/app'
-import * as firebaseui from 'firebaseui'
 import paperfibers from '../assets/paper_fibers.png'
 
 class App extends Component {
-
-  componentWillMount() {
+  componentWillMount () {
     const config = {
-      apiKey: "AIzaSyB4ka2MRJOnBN09F-8LFfgTYD-UzxpOqIo",
-      authDomain: "dj-bullet-journal.firebaseapp.com",
-      databaseURL: "https://dj-bullet-journal.firebaseio.com",
-      projectId: "dj-bullet-journal",
-      storageBucket: "dj-bullet-journal.appspot.com",
-      messagingSenderId: "739960274468"
+      apiKey: 'AIzaSyB4ka2MRJOnBN09F-8LFfgTYD-UzxpOqIo',
+      authDomain: 'dj-bullet-journal.firebaseapp.com',
+      databaseURL: 'https://dj-bullet-journal.firebaseio.com',
+      projectId: 'dj-bullet-journal',
+      storageBucket: 'dj-bullet-journal.appspot.com',
+      messagingSenderId: '739960274468'
     }
-    firebase.initializeApp(config);
+    firebase.initializeApp(config)
   }
 
-
-  render() {
+  render () {
     return (
       <div style={styles.container}>
         <div style={styles.header}>
           <h2>Tiny Journal</h2>
         </div>
         <Router>
-          <Route path="/" exact component={Landing} />
+          <Route path='/' exact component={Landing} />
+          <Route path='/' component={Auth} />
         </Router>
       </div>
-    );
+    )
   }
 }
 
-export default App;
+export default App
 
 const styles = {
   container: {
@@ -49,7 +48,7 @@ const styles = {
   },
   header: {
     fontSize: 44,
-    fontFamily: 'Amatic SC',
-  },
+    fontFamily: 'Amatic SC'
+  }
 
 }

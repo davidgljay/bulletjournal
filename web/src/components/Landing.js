@@ -1,15 +1,14 @@
-import React, {Component} from 'react';
-import Icon from '@material-ui/core/Icon';
-import spreadsheetImg1 from '../assets/spreadsheet1.png';
-import spreadsheetImg2 from '../assets/spreadsheet2.png';
-import spreadsheetImg3 from '../assets/spreadsheet3.png';
-import spreadsheetImg4 from '../assets/spreadsheet4.png';
+import React, { Component } from 'react'
+import Icon from '@material-ui/core/Icon'
+import spreadsheetImg1 from '../assets/spreadsheet1.png'
+import spreadsheetImg2 from '../assets/spreadsheet2.png'
+import spreadsheetImg3 from '../assets/spreadsheet3.png'
+import spreadsheetImg4 from '../assets/spreadsheet4.png'
 
 class Landing extends Component {
-
-  constructor(props) {
+  constructor (props) {
     super(props)
-    this.state={
+    this.state = {
       index: 0,
       timer: null
     }
@@ -29,24 +28,24 @@ class Landing extends Component {
     ]
   }
 
-  componentDidMount() {
+  componentDidMount () {
     this.setState({
       timer: setInterval(() => this.setState((prevState) => {
         const index = prevState.index >= this.sampleQuestions.length - 1 ? 0 : prevState.index + 1
-        return {...prevState, index}
+        return { ...prevState, index }
       }), 2500)
     })
   }
 
-  componentWillUnmount() {
+  componentWillUnmount () {
     clearInterval(this.state.timer)
   }
 
-  render() {
-    const {index} = this.state
+  render () {
+    const { index } = this.state
     return <div style={styles.container}>
       <div style={styles.subheader}>
-        Text yourself questions on a regular basis<br/>and save the answers in a Google Spreadsheet.
+        Text yourself questions on a regular basis<br />and save the answers in a Google Spreadsheet.
       </div>
       <div style={styles.sampleQuestion}>
         {
@@ -58,15 +57,15 @@ class Landing extends Component {
       </div>
       <div>
         {
-          <img alt='A spreadsheet' style={styles.spreadsheetImage} src={this.spreadsheetImages[index]}/>
+          <img alt='A spreadsheet' style={styles.spreadsheetImage} src={this.spreadsheetImages[index]} />
         }
       </div>
-      <div id="firebaseui-auth-container"></div>
+      <div id='firebaseui-auth-container' />
     </div>
   }
 }
 
-export default Landing;
+export default Landing
 
 const styles = {
   container: {
@@ -98,4 +97,4 @@ const styles = {
     width: 700,
     margin: 20
   }
-};
+}
