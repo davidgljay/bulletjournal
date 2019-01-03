@@ -25,8 +25,10 @@ class App extends Component {
           <h2>Tiny Journal</h2>
         </div>
         <Router>
-          <Route path='/' exact component={Landing} />
-          <Route path='/' component={Auth} />
+          <div>
+            <Route path='/' exact component={Landing} />
+            <Route path='/' component={Auth} />
+          </div>
         </Router>
       </div>
     )
