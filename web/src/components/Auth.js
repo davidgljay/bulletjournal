@@ -10,7 +10,7 @@ class Auth extends Component {
 
   compnentWillMount() {
     const params = new URLSearchParams(document.location.search.substring(1))
-    params.get('stuff')
+    const code = params.get('code')
   }
 
   render () {

@@ -8,19 +8,18 @@ exports.helloWorld = functions.https.onRequest((req, res) => {
  res.send("Hello from Firebase!");
 });
 
-exports.getToken = functions.https.onRequest(req, res) => {
-
+exports.getToken = functions.https.onRequest((req, res) => {
   let url = 'https://www.googleapis.com/oauth2/v4/token?'
   url += `code=${req.query.code}&`
-  url += `client_id=${functions.config().google.key}&`
+  url += `client_id=${functions.config().google.client_id}&`
   url += `client_secret=${functions.config().google.secret}&`
   url += `redirect_uri=${encodeURIComponent('https://tinyjournal.us/auth')}&`
   url += 'grant_type=authorization_code'
 
-  fetch(url, {method: 'POST'}).then(({body}) => {
-    res.send(body)
-  })
-}
+  return fetch(url, {method: 'POST'}).then(response =>
+    res.send(response, response.status)
+  ).catch(err => res.send(err))
+})
 
 exports.sendSms = functions.https.onRequest((req, res) => {
   const message = req.query.text;
