@@ -1,9 +1,21 @@
 import React, { Component } from 'react'
 import { BrowserRouter as Router, Route } from 'react-router-dom'
+import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles'
 import Landing from './Landing'
 import Auth from './Auth'
 import firebase from 'firebase/app'
 import paperfibers from '../assets/paper_fibers.png'
+
+const theme = createMuiTheme({
+  palette: {
+    primary: {
+      main: '#0da95f'
+    },
+    secondary:  {
+      main: '#2979ff'
+    },
+  },
+});
 
 class App extends Component {
   componentWillMount () {
@@ -20,17 +32,19 @@ class App extends Component {
 
   render () {
     return (
-      <div style={styles.container}>
-        <div style={styles.header}>
-          <h2>Tiny Journal</h2>
-        </div>
-        <Router>
-          <div>
-            <Route path='/' exact component={Landing} />
-            <Route path='/' component={Auth} />
+      <MuiThemeProvider theme={theme}>
+        <div style={styles.container}>
+          <div style={styles.header}>
+            <h2>Tiny Journal</h2>
           </div>
-        </Router>
-      </div>
+          <Router>
+            <div>
+              <Route path='/' exact component={Landing} />
+              <Route path='/' component={Auth} />
+            </div>
+          </Router>
+        </div>
+      </MuiThemeProvider>
     )
   }
 }

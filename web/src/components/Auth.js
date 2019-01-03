@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import CircularProgress from '@material-ui/core/CircularProgress'
 
 class Auth extends Component {
   constructor (props) {
@@ -8,7 +9,10 @@ class Auth extends Component {
   }
 
   render () {
-    return <div />
+    const params = new URLSearchParams(document.location.search.substring(1))
+    return <div>{params.get('stuff')}
+      <CircularProgress />
+    </div>
   }
 }
 
