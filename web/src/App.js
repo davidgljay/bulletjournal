@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import Icon from '@material-ui/core/Icon';
+import firebase from 'firebase/app';
+import * as firebaseui from 'firebaseui'
 import paperfibers from './assets/paper_fibers.png';
 import spreadsheetImg1 from './assets/spreadsheet1.png';
 import spreadsheetImg2 from './assets/spreadsheet2.png';
@@ -31,7 +33,34 @@ class App extends Component {
     ]
   }
 
+  componentWillMount() {
+    const config = {
+      apiKey: "AIzaSyB4ka2MRJOnBN09F-8LFfgTYD-UzxpOqIo",
+      authDomain: "dj-bullet-journal.firebaseapp.com",
+      databaseURL: "https://dj-bullet-journal.firebaseio.com",
+      projectId: "dj-bullet-journal",
+      storageBucket: "dj-bullet-journal.appspot.com",
+      messagingSenderId: "739960274468"
+    };
+    firebase.initializeApp(config);
+  }
+
   componentDidMount() {
+    // Initialize the FirebaseUI Widget using Firebase.
+    const ui = new firebaseui.auth.AuthUI(firebase.auth());
+    const uiConfig = {
+        signInSuccessUrl: window.location,
+        signInOptions: [
+          firebase.auth.GoogleAuthProvider.PROVIDER_ID
+        ],
+        // tosUrl: '<your-tos-url>',
+        // // Privacy policy url/callback.
+        // privacyPolicyUrl: function() {
+        //   window.location.assign('<your-privacy-policy-url>');
+        // }
+      };
+    // The start method will wait until the DOM is loaded.
+    ui.start('#firebaseui-auth-container', uiConfig);
     this.setState({
       timer: setInterval(() => this.setState((prevState) => {
         const sampleIndex = prevState.sampleIndex >= this.sampleQuestions.length - 1 ? 0 : prevState.sampleIndex + 1
@@ -65,9 +94,10 @@ class App extends Component {
         </div>
         <div>
           {
-            <img style={styles.spreadsheetImage} src={this.spreadsheetImages[sampleIndex]}/>
+            <img alt='A spreadsheet' style={styles.spreadsheetImage} src={this.spreadsheetImages[sampleIndex]}/>
           }
         </div>
+        <div id="firebaseui-auth-container"></div>
       </div>
     );
   }
@@ -80,7 +110,7 @@ const styles = {
     width: '100%',
     minHeight: '100vh',
     display: 'flex',
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     flexDirection: 'column',
     alignItems: 'center',
     fontFamily: 'Roboto',
