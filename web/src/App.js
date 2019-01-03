@@ -1,4 +1,10 @@
 import React, { Component } from 'react';
+import Icon from '@material-ui/core/Icon';
+import paperfibers from './assets/paper_fibers.png';
+import spreadsheetImg1 from './assets/spreadsheet1.png';
+import spreadsheetImg2 from './assets/spreadsheet2.png';
+import spreadsheetImg3 from './assets/spreadsheet3.png';
+import spreadsheetImg4 from './assets/spreadsheet4.png';
 
 class App extends Component {
 
@@ -13,10 +19,15 @@ class App extends Component {
     this.sampleQuestions = [
       'What am I grateful for?',
       'How am I feeling this week?',
-      'What did I achieve today?',
       'What did I learn this week?',
-      'What surprised me?',
-      'Where did I find peace?'
+      'What surprised me?'
+    ]
+
+    this.spreadsheetImages = [
+      spreadsheetImg1,
+      spreadsheetImg2,
+      spreadsheetImg3,
+      spreadsheetImg4
     ]
   }
 
@@ -25,7 +36,7 @@ class App extends Component {
       timer: setInterval(() => this.setState((prevState) => {
         const sampleIndex = prevState.sampleIndex >= this.sampleQuestions.length - 1 ? 0 : prevState.sampleIndex + 1
         return {...prevState, sampleIndex}
-      }), 4000)
+      }), 2500)
     })
   }
 
@@ -49,6 +60,14 @@ class App extends Component {
             this.sampleQuestions[sampleIndex]
           }
         </div>
+        <div>
+          <Icon style={styles.arrow}>arrow_downward</Icon>
+        </div>
+        <div>
+          {
+            <img style={styles.spreadsheetImage} src={this.spreadsheetImages[sampleIndex]}/>
+          }
+        </div>
       </div>
     );
   }
@@ -59,26 +78,39 @@ export default App;
 const styles = {
   container: {
     width: '100%',
+    minHeight: '100vh',
     display: 'flex',
     justifyContent: 'center',
     flexDirection: 'column',
     alignItems: 'center',
-    fontFamily: 'Amatic SC',
+    fontFamily: 'Roboto',
+    background: `url(${paperfibers})`
   },
   header: {
     fontSize: 44,
+    fontFamily: 'Amatic SC',
   },
   subheader: {
-    fontSize: 32,
+    fontSize: 24,
     textAlign: 'center'
   },
   sampleQuestion: {
-    margin: 40,
-    fontSize: 36,
+    marginTop: 40,
+    marginBottom: 20,
+    fontSize: 24,
     padding: 10,
-    borderRadius: 4,
+    borderRadius: 7,
     width: 300,
     textAlign: 'center',
-    backgroundColor: 'lightBlue'
+    backgroundColor: 'lightgrey',
+    fontFamily: 'Roboto'
+  },
+  arrow: {
+    fontSize: 44,
+    color: '#0da95f'
+  },
+  spreadsheetImage: {
+    width: 700,
+    margin: 20
   }
 }
