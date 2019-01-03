@@ -40,7 +40,7 @@ class App extends Component {
           <Router>
             <div>
               <Route path='/' exact component={Landing} />
-              <Route path='/' component={Auth} />
+              <Route path='/auth' component={Auth} />
             </div>
           </Router>
         </div>

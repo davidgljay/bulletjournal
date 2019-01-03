@@ -8,10 +8,14 @@ class Auth extends Component {
     this.state = {}
   }
 
-  render () {
+  compnentWillMount() {
     const params = new URLSearchParams(document.location.search.substring(1))
-    return <div>{params.get('stuff')}
-      <CircularProgress />
+    params.get('stuff')
+  }
+
+  render () {
+    return <div>
+      <CircularProgress color='#0da95f'/>
     </div>
   }
 }
