@@ -1,6 +1,6 @@
 {
-  "database": {
-    "rules": "database.rules.json"
+  "firestore": {
+    "rules": "firestore.rules"
   },
   "functions": {
     "predeploy": [
@@ -15,8 +15,5 @@
       "**/.*",
       "**/node_modules/**"
     ]
-  },
-  "storage": {
-    "rules": "storage.rules"
   }
 }
