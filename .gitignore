@@ -1,5 +1,5 @@
 googleauth.json
 firebase-debug.log
-/.firebase/
+.firebase/*
 /functions/node_modules
 /functions/.runtimeconfig.json
