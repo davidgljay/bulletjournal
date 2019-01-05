@@ -24,7 +24,7 @@ class App extends Component {
     super(props)
 
     this.state = {
-      user
+      user: null
     }
   }
 
@@ -42,7 +42,7 @@ class App extends Component {
     const settings = {timestampsInSnapshots: true};
     firestore.settings(settings);
 
-    firebase.auth().onAuthStateChanged(function(user) {
+    firebase.auth().onAuthStateChanged(user => {
       if (user) {
         this.setState({user})
         // Once an id_token has been retreived, use it to authenticate the user

@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import Icon from '@material-ui/core/Icon'
 import googleLoginButton from '../assets/btn_google_signin_light_normal_web@2x.png'
+import phoneEmoji from '../assets/mobile-phone.png'
 import spreadsheetImg1 from '../assets/spreadsheet1.png'
 import spreadsheetImg2 from '../assets/spreadsheet2.png'
 import spreadsheetImg3 from '../assets/spreadsheet3.png'
@@ -87,10 +88,13 @@ class Landing extends Component {
       <div style={styles.subheader}>
         Text yourself questions on a regular basis<br />and save the answers in a Google Spreadsheet.
       </div>
-      <div style={styles.sampleQuestion}>
-        {
-          this.sampleQuestions[index]
-        }
+      <div style={styles.questionContainer}>
+        <div style={styles.sampleQuestion}>
+          {
+            this.sampleQuestions[index]
+          }
+        </div>
+        <img style={styles.phoneEmoji} src={phoneEmoji}/>
       </div>
       <div>
         <Icon style={styles.arrow}>arrow_downward</Icon>
@@ -118,20 +122,29 @@ const styles = {
     fontSize: 24,
     textAlign: 'center'
   },
+  questionContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    marginTop: 20
+  },
   sampleQuestion: {
     marginTop: 40,
     marginBottom: 20,
     fontSize: 24,
     padding: 10,
     borderRadius: 7,
+    borderTopRightRadius: 3,
     width: 300,
     textAlign: 'center',
-    backgroundColor: 'lightgrey',
+    backgroundColor: 'rgb(83, 175, 238)',
     fontFamily: 'Roboto'
   },
   arrow: {
     fontSize: 44,
     color: '#0da95f'
+  },
+  phoneEmoji: {
+    width: 80
   },
   spreadsheetImage: {
     width: 700,
