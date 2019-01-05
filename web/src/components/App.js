@@ -19,6 +19,15 @@ const theme = createMuiTheme({
 });
 
 class App extends Component {
+
+  constructor(props) {
+    super(props)
+
+    this.state = {
+      user
+    }
+  }
+
   componentWillMount () {
     const config = {
       apiKey: 'AIzaSyB4ka2MRJOnBN09F-8LFfgTYD-UzxpOqIo',
@@ -32,6 +41,28 @@ class App extends Component {
     const firestore = firebase.firestore();
     const settings = {timestampsInSnapshots: true};
     firestore.settings(settings);
+
+    firebase.auth().onAuthStateChanged(function(user) {
+      if (user) {
+        this.setState({user})
+        // Once an id_token has been retreived, use it to authenticate the user
+        const unsubscribe = firestore.collection('credentials').doc(user.uid)
+          .onSnapshot(doc => {
+            if (!doc || !doc.data) {
+              return
+            }
+            const id_token = doc.data().id_token
+            if (!id_token) {
+              return
+            }
+            const credential = firebase.auth.GoogleAuthProvider.credential(id_token)
+            firebase.auth().currentUser.linkAndRetrieveDataWithCredential(credential)
+            unsubscribe()
+          })
+      }
+    });
+
+
   }
 
   render () {

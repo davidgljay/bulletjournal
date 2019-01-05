@@ -16,32 +16,17 @@ class Auth extends Component {
   componentWillMount() {
     const params = new URLSearchParams(document.location.search.substring(1))
     const code = params.get('code')
-    const db = firebase.firestore()
+    const firestore = firebase.firestore()
     firebase.auth().signInAnonymously()
       .then(() => {
-        // Add the authentication code to firestore
+        // Add Google authentication code to firestore
         const userId = firebase.auth().currentUser.uid
-        db.collection('credentials').doc(userId)
+        firestore.collection('credentials').doc(userId)
           .set({
             code
           })
-
-        // Once an id_token has been retreived, use it to authenticate the user
-        const unsubscribe = db.collection('credentials').doc(userId)
-          .onSnapshot(doc => {
-            if (!doc || !doc.data) {
-              return
-            }
-            const id_token = doc.data().id_token
-            if (!id_token) {
-              return
-            }
-            const credential = firebase.auth.GoogleAuthProvider.credential(id_token)
-            firebase.auth().currentUser.linkAndRetrieveDataWithCredential(credential)
-            unsubscribe()
-          })
       })
-
+    window.location = '/'
   }
 
   render () {
