@@ -3,6 +3,8 @@ import { BrowserRouter as Router, Route } from 'react-router-dom'
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles'
 import Landing from './Landing'
 import Auth from './Auth'
+import Setup from './Setup'
+import {green} from './colors'
 import firebase from 'firebase/app'
 import 'firebase/firestore'
 import paperfibers from '../assets/paper_fibers.png'
@@ -10,7 +12,7 @@ import paperfibers from '../assets/paper_fibers.png'
 const theme = createMuiTheme({
   palette: {
     primary: {
-      main: '#0da95f'
+      main: green
     },
     secondary:  {
       main: '#2979ff'
@@ -48,7 +50,7 @@ class App extends Component {
         // Once an id_token has been retreived, use it to authenticate the user
         const unsubscribe = firestore.collection('credentials').doc(user.uid)
           .onSnapshot(doc => {
-            if (!doc || !doc.data) {
+            if (!doc.data) {
               return
             }
             const id_token = doc.data().id_token
@@ -73,8 +75,8 @@ class App extends Component {
             <h2>Tiny Journal</h2>
           </div>
           <Router>
-            <div>
-              <Route path='/' exact component={Landing} />
+            <div style={{width: '100%'}}>
+              <Route path='/' exact component={Setup} />
               <Route path='/auth' component={Auth} />
             </div>
           </Router>
