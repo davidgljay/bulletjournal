@@ -4,6 +4,7 @@ import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles'
 import Landing from './Landing'
 import Auth from './Auth'
 import firebase from 'firebase/app'
+import 'firebase/firestore'
 import paperfibers from '../assets/paper_fibers.png'
 
 const theme = createMuiTheme({
@@ -28,6 +29,9 @@ class App extends Component {
       messagingSenderId: '739960274468'
     }
     firebase.initializeApp(config)
+    const firestore = firebase.firestore();
+    const settings = {timestampsInSnapshots: true};
+    firestore.settings(settings);
   }
 
   render () {

@@ -12,13 +12,16 @@ exports.getToken = functions.https.onRequest((req, res) => {
   let url = 'https://www.googleapis.com/oauth2/v4/token?'
   url += `code=${req.query.code}&`
   url += `client_id=${functions.config().google.client_id}&`
-  url += `client_secret=${functions.config().google.secret}&`
-  url += `redirect_uri=${encodeURIComponent('https://tinyjournal.us/auth')}&`
+  url += `client_secret=${functions.config().google.client_secret}&`
+  url += `redirect_uri=${encodeURIComponent('https://82adb641.ngrok.io/auth')}&`
   url += 'grant_type=authorization_code'
+  console.log(req.query.code);
+  console.log(url);
 
-  return fetch(url, {method: 'POST'}).then(response =>
-    res.send(response, response.status)
-  ).catch(err => res.send(err))
+  return fetch(url, {method: 'POST'})
+  .then(response => Promise.all([response.status, response.text()]))
+  .then(([status, text]) => res.status(status).send(text))
+  .catch(err => res.status(500).send(err))
 })
 
 exports.sendSms = functions.https.onRequest((req, res) => {

@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import Icon from '@material-ui/core/Icon'
+import googleLoginButton from '../assets/btn_google_signin_light_normal_web@2x.png'
 import spreadsheetImg1 from '../assets/spreadsheet1.png'
 import spreadsheetImg2 from '../assets/spreadsheet2.png'
 import spreadsheetImg3 from '../assets/spreadsheet3.png'
@@ -44,10 +45,11 @@ class Landing extends Component {
 
       // Parameters to pass to OAuth 2.0 endpoint.
       var params = {'client_id': '739960274468-uteu6u1fgjjtfcaqiinpp2g676rrsm7m.apps.googleusercontent.com',
-                    'redirect_uri': 'http://localhost:3000/auth',
+                    'redirect_uri': 'https://82adb641.ngrok.io/auth',
                     'response_type': 'code',
                     'access_type': 'offline',
-                    'scope': 'https://www.googleapis.com/auth/spreadsheets',
+                    'scope': 'openid',
+                    'prompt': 'consent', //TODO: Remove after oauth development
                     'include_granted_scopes': 'true',
                     'state': authKey};
 
@@ -98,7 +100,7 @@ class Landing extends Component {
           <img alt='A spreadsheet' style={styles.spreadsheetImage} src={this.spreadsheetImages[index]} />
         }
       </div>
-      <div onClick={this.oauthSignIn}>Log in w/ the Goog</div>
+      <div onClick={this.oauthSignIn}><img style={styles.login} src={googleLoginButton}/></div>
     </div>
   }
 }
@@ -134,5 +136,9 @@ const styles = {
   spreadsheetImage: {
     width: 700,
     margin: 20
+  },
+  login: {
+    width: 191,
+    cursor: 'pointer'
   }
 }

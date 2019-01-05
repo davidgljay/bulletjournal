@@ -1,21 +1,37 @@
 import React, { Component } from 'react'
 import CircularProgress from '@material-ui/core/CircularProgress'
+import firebase from 'firebase/app'
+import 'firebase/auth'
+import 'firebase/firestore'
 
 class Auth extends Component {
   constructor (props) {
     super(props)
 
-    this.state = {}
+    this.state = {
+      res: null
+    }
   }
 
-  compnentWillMount() {
+  componentWillMount() {
     const params = new URLSearchParams(document.location.search.substring(1))
     const code = params.get('code')
+    firebase.auth().signInAnonymously()
+      .then(() => {
+        firebase.firestore().collection('credentials')
+        .doc(firebase.auth().currentUser.uid)
+        .set({
+          code
+        })
+      })
   }
 
   render () {
+    const {res} = this.state
     return <div>
-      <CircularProgress color='#0da95f'/>
+      {
+        res ? <div>{res}</div> : <CircularProgress />
+      }
     </div>
   }
 }
