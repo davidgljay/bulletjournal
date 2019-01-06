@@ -4,7 +4,6 @@ import TextField from '@material-ui/core/TextField'
 import Button from '@material-ui/core/Button'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import firebase from 'firebase/app'
-import 'firebase/auth'
 import 'firebase/firestore'
 import {green} from '../colors'
 
@@ -64,7 +63,6 @@ class PhoneNumber extends Component {
     const {phoneNumber, confirmation, error} = this.state
 
     let PhoneButton = <Button
-        variant="contained"
         color="primary"
         style={styles.button}
         onClick={this.confirmNumber}>
