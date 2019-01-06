@@ -15,7 +15,7 @@ class Setup extends Component {
       questions: []
     }
 
-    this.getUid = () => firebase.auth().currentUser ?  firebase.auth().currentUser.uid : null
+    this.getUid = () => firebase.auth().currentUser ?  firebase.auth().currentUser.uid : 'test'
 
     this.logout = () => firebase.auth().signOut()
 

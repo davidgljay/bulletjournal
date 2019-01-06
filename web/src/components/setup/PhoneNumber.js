@@ -59,6 +59,19 @@ class PhoneNumber extends Component {
     }
   }
 
+  componentWillMount() {
+    const {userId} = this.props
+    firebase.firestore().collection('users').doc(userId)
+      .get().then(user => {
+        if (!user.exists()) {
+          return
+        }
+        this.setState({
+          phoneNumber: user.data().phone
+        })
+      })
+  }
+
   render () {
     const {phoneNumber, confirmation, error} = this.state
 
