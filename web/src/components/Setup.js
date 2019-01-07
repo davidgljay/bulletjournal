@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import PhoneNumber from './setup/PhoneNumber'
 import Questions from './setup/Questions'
+import Time from './setup/Time'
 import Icon from '@material-ui/core/Icon'
 import firebase from 'firebase/app'
 import 'firebase/auth'
@@ -19,10 +20,6 @@ class Setup extends Component {
 
     this.logout = () => firebase.auth().signOut()
 
-    this.updateQuestion = () => {}
-
-    this.addQuestion = () => {}
-
   }
 
   render () {
@@ -31,6 +28,7 @@ class Setup extends Component {
       <div style={styles.logoutContainer} >
         <div style={styles.logout} onClick={this.logout}>Log Out <Icon style={styles.logoutIcon}>logout</Icon></div>
       </div>
+      <Time userId={this.getUid()} />
       <PhoneNumber userId={this.getUid()} />
       <Questions userId={this.getUid()} />
     </div>
