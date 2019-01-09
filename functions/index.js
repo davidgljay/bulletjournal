@@ -4,7 +4,7 @@ const fetch = require('node-fetch');
 const sendSms = require('./twilio');
 admin.initializeApp();
 
-exports.googleAuth = functions.firestore.document('credentials/{userId}').onCreate((snap, context) => {
+exports.googleAuth = functions.firestore.document('users/{userId}').onCreate((snap, context) => {
   if (!snap.data().code) {
     return false
   }
@@ -18,10 +18,27 @@ exports.googleAuth = functions.firestore.document('credentials/{userId}').onCrea
   return fetch(url, {method: 'POST'})
   .then(response => response.json())
   .then(json => {
-    snap.ref.set(json)
+    snap.ref.set({id_token: json.id_token}) //Update to "remove code"
+    functions.firestore.collection('credentials').doc(userId).set(json)
   })
   .catch(err => snap.ref.update({error: 'An error occurred! ' + err}))
 })
+
+exports.checkForUsers = functions.https.onRequest((req, res) => {
+  //Get users for this hour
+  //Publish each as a pubsub message
+})
+
+exports.initialMessage = () => {
+  //Send initial sms to a user and set appropriate sheet fields
+}
+
+exports.messageResponse = () => {
+  //Record message response and send next question if applicable.
+}
+
+
+
 
 exports.sendSms = functions.https.onRequest((req, res) => {
   const message = req.query.text;

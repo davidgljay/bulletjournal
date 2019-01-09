@@ -21,7 +21,7 @@ class Auth extends Component {
       .then(() => {
         // Add Google authentication code to firestore
         const userId = firebase.auth().currentUser.uid
-        firestore.collection('credentials').doc(userId)
+        firestore.collection('users').doc(userId)
           .set({
             code
           })

@@ -1,3 +1,25 @@
+module.exports.refreshToken = (userId, refresh) => {
+  let url = 'https://www.googleapis.com/oauth2/v4/token?'
+  url += `refresh_token=${refresh}&`
+  url += `client_id=${functions.config().google.client_id}&`
+  url += `client_secret=${functions.config().google.client_secret}&`
+  url += 'grant_type=refresh_token'
+
+  return fetch(url, {
+      method: 'POST'
+    })
+    .then(res => res.ok ? res.json : Promise.reject('Failed to refresh token'))
+    .then(json =>
+      functions.firestore.collection(credentials).doc(userId).update({
+        access_token: json.access_token
+      })
+      .then(() => json.access_token)
+    )
+
+}
+
+
+
 module.exports.createSheet = (name, token) =>
   fetch('https://sheets.googleapis.com/v4/spreadsheets', {
     method: 'POST',
@@ -94,4 +116,4 @@ module.formatRow = (row, spreadsheetId, token) =>
       ]
     })
   })
-    .then(res => res.ok ? res.json : Promise.reject('Failed to format row'))
+  .then(res => res.ok ? res.json : Promise.reject('Failed to format row'))

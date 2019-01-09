@@ -48,7 +48,7 @@ class App extends Component {
       if (user) {
         this.setState({user})
         // Once an id_token has been retreived, use it to authenticate the user
-        const unsubscribe = firestore.collection('credentials').doc(user.uid)
+        const unsubscribe = firestore.collection('users').doc(user.uid)
           .onSnapshot(doc => {
             if (!doc.data) {
               return
