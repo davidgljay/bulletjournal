@@ -46,7 +46,7 @@ class Landing extends Component {
 
       // Parameters to pass to OAuth 2.0 endpoint.
       var params = {'client_id': '739960274468-uteu6u1fgjjtfcaqiinpp2g676rrsm7m.apps.googleusercontent.com',
-                    'redirect_uri': 'https://82adb641.ngrok.io/auth',
+                    'redirect_uri': 'https://27c6e919.ngrok.io/auth',
                     'response_type': 'code',
                     'access_type': 'offline',
                     'scope': 'openid',
@@ -133,7 +133,7 @@ const styles = {
     fontSize: 24,
     padding: 10,
     borderRadius: 7,
-    borderTopRightRadius: 3,
+    borderTopRightRadius: 1,
     width: 300,
     textAlign: 'center',
     backgroundColor: 'rgb(83, 175, 238)',

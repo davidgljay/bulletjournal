@@ -13,7 +13,7 @@ module.exports.refreshTokenIfNeeded = call => (userId, refresh, token) =>
         return fetch(url, {
             method: 'POST'
           })
-          .then(res => res.ok ? res.json : Promise.reject('Failed to refresh token'))
+          .then(res => res.ok ? res.json : Promise.reject(new Error('Failed to refresh token')))
           .then(json =>
             db.collection(credentials).doc(userId).update({
               access_token: json.access_token
@@ -35,21 +35,23 @@ module.exports.createSheet = name => token =>
       }
     })
   })
-  .then(res => res.ok ? res.json : Promise.reject('Failed to create spreadsheet'))
+  .then(res => res.ok ? res.json : Promise.reject(new Error('Failed to create spreadsheet')))
   .then(json => json.spreadsheetId)
 
 module.appendItems = (items, range, spreadsheetId) => token =>
   fetch(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}:append?insertDataOption=INSERT_ROWS&valueInputOption=RAW`,
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${token}`
-    },
-    body: JSON.parse({
-      range,
-      values: [items]
-    })
+    {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.parse({
+        range,
+        values: [items]
+      })
+    }
   )
-  .then(res => res.ok ? res.json : Promise.reject('Failed to append items to spreadsheet'))
+  .then(res => res.ok ? res.json : Promise.reject(new Error('Failed to append items to spreadsheet')))
 
 module.formatRow = (row, spreadsheetId) => token =>
   fetch(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}:batchUpdate`, {
@@ -119,4 +121,4 @@ module.formatRow = (row, spreadsheetId) => token =>
       ]
     })
   })
-  .then(res => res.ok ? res.json : Promise.reject('Failed to format row'))
+  .then(res => res.ok ? res.json : Promise.reject(new Error('Failed to format row')))

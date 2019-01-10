@@ -1,5 +1,4 @@
 import React, {Component} from 'react'
-import PropTypes from 'prop-types'
 import Select from '@material-ui/core/Select'
 import MenuItem from '@material-ui/core/MenuItem'
 import {grey} from '../colors'
@@ -18,7 +17,7 @@ class Time extends Component {
 
     this.toUTC = (localHour, localDay) => {
       const offset = new Date().getTimezoneOffset()/60
-      const hour = (hour + offset) % 24
+      const hour = (localHour + offset) % 24
       let day = localDay
       if (hour + offset > 24) {
         day = (day + 1) % 6
@@ -51,12 +50,15 @@ class Time extends Component {
     const {userId} = this.props
     firebase.firestore().collection('users').doc(userId)
       .get().then(user => {
-        if (!user.exists()) {
+        if (!user.exists) {
           return
         }
         const {day, hour} = user.data()
         if (day && hour) {
           this.setState({day, hour})
+        } else {
+          this.setDay({target: {value: 0}})
+          this.setHour({target: {value: 19}})
         }
       })
   }

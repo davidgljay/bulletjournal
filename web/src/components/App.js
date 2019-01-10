@@ -26,7 +26,7 @@ class App extends Component {
     super(props)
 
     this.state = {
-      user: null
+      loggedIn: false
     }
   }
 
@@ -46,21 +46,40 @@ class App extends Component {
 
     firebase.auth().onAuthStateChanged(user => {
       if (user) {
-        this.setState({user})
+        this.setState({loggedIn: true})
+
+        if (user.providerData && user.providerData.length > 0) {
+          return
+        }
         // Once an id_token has been retreived, use it to authenticate the user
         const unsubscribe = firestore.collection('users').doc(user.uid)
           .onSnapshot(doc => {
-            if (!doc.data) {
+            if (!doc.data()) {
               return
             }
             const id_token = doc.data().id_token
             if (!id_token) {
               return
             }
+
             const credential = firebase.auth.GoogleAuthProvider.credential(id_token)
-            firebase.auth().currentUser.linkAndRetrieveDataWithCredential(credential)
-            unsubscribe()
+            return firebase.auth().currentUser.linkAndRetrieveDataWithCredential(credential)
+              .then(unsubscribe)
+              .catch(() => {
+                let data
+                const anonymousUser = firebase.auth().currentUser
+                return firestore.collection('users').doc(anonymousUser.uid).get()
+                  .then(snapshot => {
+                    data = snapshot.data()
+                    return firestore.collection('users').doc(anonymousUser.uid).delete()
+                  })
+                  .then(() => anonymousUser.delete())
+                  .then(() => firebase.auth().signInAndRetrieveDataWithCredential(credential))
+                  .then(() => firestore.collection('users').doc(firebase.auth().currentUser.uid).update(data))
+              })
           })
+      } else {
+        this.setState({loggedIn: false})
       }
     });
 
@@ -68,6 +87,7 @@ class App extends Component {
   }
 
   render () {
+    const {loggedIn} = this.state
     return (
       <MuiThemeProvider theme={theme}>
         <div style={styles.container}>
@@ -76,7 +96,7 @@ class App extends Component {
           </div>
           <Router>
             <div style={{width: '100%'}}>
-              <Route path='/' exact component={Setup} />
+              <Route path='/' exact component={loggedIn ? Setup : Landing} />
               <Route path='/auth' component={Auth} />
             </div>
           </Router>
@@ -93,6 +113,7 @@ const styles = {
     width: '100%',
     minHeight: '100vh',
     display: 'flex',
+    paddingBottom: 100,
     justifyContent: 'flex-start',
     flexDirection: 'column',
     alignItems: 'center',

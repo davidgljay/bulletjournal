@@ -5,7 +5,7 @@ import TextField from '@material-ui/core/TextField'
 import Button from '@material-ui/core/Button'
 import firebase from 'firebase/app'
 import 'firebase/firestore'
-import {green, grey} from '../colors'
+import {grey} from '../colors'
 
 class Questions extends Component {
 
@@ -33,7 +33,7 @@ class Questions extends Component {
       const {userId} = this.props
       const {questions} = this.state
       firebase.firestore().collection('users').doc(userId)
-        .set({questions})
+        .update({questions})
       this.setState({posted: true})
     }
 
@@ -50,10 +50,10 @@ class Questions extends Component {
     const {userId} = this.props
     firebase.firestore().collection('users').doc(userId).get()
       .then(user => {
-        if (!user.exists()) {
+        if (!user.exists) {
           return
         }
-        this.setState({questions: user.data().questions})
+        this.setState({questions: user.data().questions || [''] })
       })
   }
 
@@ -62,9 +62,9 @@ class Questions extends Component {
 
     return <div style={styles.inputContainer}>
       {
-        questions.map((question, i) =>
+        questions && questions.map((question, i) =>
           {
-            return <div style={styles.questionContainer}>
+            return <div style={styles.questionContainer} key={i}>
               <TextField
                 label={`Question ${i+1}`}
                 margin="normal"
@@ -96,7 +96,14 @@ class Questions extends Component {
         }
       </div>
       {
-        !posted && <Button color='primary' variant='contained' style={styles.button}>Done</Button>
+        !posted &&
+        <Button
+          color='primary'
+          variant='contained'
+          style={styles.button}
+          onClick={this.postQuestions}>
+          Done
+        </Button>
       }
     </div>
   }

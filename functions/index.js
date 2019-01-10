@@ -12,7 +12,7 @@ exports.googleAuth = functions.firestore.document('users/{userId}').onCreate((sn
   url += `code=${snap.data().code}&`
   url += `client_id=${functions.config().google.client_id}&`
   url += `client_secret=${functions.config().google.client_secret}&`
-  url += `redirect_uri=${encodeURIComponent('https://82adb641.ngrok.io/auth')}&`
+  url += `redirect_uri=${encodeURIComponent('https://27c6e919.ngrok.io/auth')}&`
   url += 'grant_type=authorization_code'
 
   return fetch(url, {method: 'POST'})
@@ -20,12 +20,10 @@ exports.googleAuth = functions.firestore.document('users/{userId}').onCreate((sn
   .then(json => {
     snap.ref.set({
       id_token: json.id_token,
-      day: 0,
-      hour: 17
     })
-    db.collection('credentials').doc(userId).set(json)
+    return db.collection('credentials').doc(userId).set(json)
   })
-  .catch(err => snap.ref.update({error: 'An error occurred! ' + err}))
+  .catch(err => snap.ref.update({error: 'An error occurred! ' + err + ',' + db}))
 })
 
 exports.checkForUsers = functions.pubsub.topic('tinyjournal_hourly').onPublish(() => {

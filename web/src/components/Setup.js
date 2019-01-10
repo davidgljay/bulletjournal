@@ -12,25 +12,19 @@ class Setup extends Component {
   constructor(props) {
     super(props)
 
-    this.state = {
-      questions: []
-    }
-
-    this.getUid = () => firebase.auth().currentUser ?  firebase.auth().currentUser.uid : 'test'
-
     this.logout = () => firebase.auth().signOut()
 
   }
 
   render () {
-    const {questions} = this.state
-    return <div style={styles.container}>
+    const userId = firebase.auth().currentUser && firebase.auth().currentUser.uid
+    return userId && <div style={styles.container}>
       <div style={styles.logoutContainer} >
         <div style={styles.logout} onClick={this.logout}>Log Out <Icon style={styles.logoutIcon}>logout</Icon></div>
       </div>
-      <Time userId={this.getUid()} />
-      <PhoneNumber userId={this.getUid()} />
-      <Questions userId={this.getUid()} />
+      <Time userId={userId} />
+      <PhoneNumber userId={userId} />
+      <Questions userId={userId} />
     </div>
 
   }

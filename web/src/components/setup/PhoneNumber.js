@@ -37,16 +37,17 @@ class PhoneNumber extends Component {
       } else {
         this.setState({error: null})
       }
-      firebase.firestore().collection('user').doc(userId)
+      firebase.firestore().collection('users').doc(userId)
         .update({
-          phone
+          phone,
+          phoneConfirmed: false
         })
       this.setState({
         confirmation: 'confirming'
       })
       const phoneUnsub = firebase.firestore().collection('users').doc(userId)
         .onSnapshot(doc => {
-          if (!doc.data) {
+          if (!doc.data()) {
             return
           }
           if (doc.data().phoneConfirmed) {
@@ -63,11 +64,11 @@ class PhoneNumber extends Component {
     const {userId} = this.props
     firebase.firestore().collection('users').doc(userId)
       .get().then(user => {
-        if (!user.exists()) {
+        if (!user.exists) {
           return
         }
         this.setState({
-          phoneNumber: user.data().phone
+          phoneNumber: user.data().phone || ''
         })
       })
   }
@@ -83,7 +84,7 @@ class PhoneNumber extends Component {
       </Button>
 
     if (confirmation === 'confirming') {
-      PhoneButton = <CircularProgress />
+      PhoneButton = <div style={styles.button}><CircularProgress /></div>
     } else if (confirmation === 'confirmed') {
       PhoneButton = <Icon style={styles.check}>check</Icon>
     }
