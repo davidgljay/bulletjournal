@@ -47,8 +47,9 @@ exports.checkForUsers = functions.pubsub.topic('tinyjournal_hourly').onPublish((
 
 })
 
-this.initialMessage = functions.firestore.document('queue/{userId}').onCreate((snap, context) => {
-  const userId = snap.data().userId
+this.initialMessage = functions.firestore.document('queue/{taskId}').onCreate((snap, context) => {
+  const {number, questions} = snap.data()
+
   //Send initial sms to a user and set appropriate sheet fields
 })
 

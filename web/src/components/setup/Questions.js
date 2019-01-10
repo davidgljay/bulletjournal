@@ -32,8 +32,8 @@ class Questions extends Component {
     this.postQuestions = () => {
       const {userId} = this.props
       const {questions} = this.state
-      firebase.firestore().collection('questions').doc(userId)
-        .set(questions)
+      firebase.firestore().collection('users').doc(userId)
+        .set({questions})
       this.setState({posted: true})
     }
 
@@ -48,12 +48,12 @@ class Questions extends Component {
 
   componentWillMount() {
     const {userId} = this.props
-    firebase.firestore().collection('questions').doc(userId).get()
-      .then(questions => {
-        if (!questions.exists()) {
+    firebase.firestore().collection('users').doc(userId).get()
+      .then(user => {
+        if (!user.exists()) {
           return
         }
-        this.setState({questions: questions.data()})
+        this.setState({questions: user.data().questions})
       })
   }
 
