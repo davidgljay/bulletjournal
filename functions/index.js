@@ -1,8 +1,8 @@
-const functions = require('firebase-functions');
-const admin = require('firebase-admin');
-const fetch = require('node-fetch');
-const sendSms = require('./twilio');
-admin.initializeApp();
+const functions = require('firebase-functions')
+const db = require('./db')
+const fetch = require('node-fetch')
+const sendSms = require('./twilio')
+
 
 exports.googleAuth = functions.firestore.document('users/{userId}').onCreate((snap, context) => {
   if (!snap.data().code) {
@@ -18,20 +18,39 @@ exports.googleAuth = functions.firestore.document('users/{userId}').onCreate((sn
   return fetch(url, {method: 'POST'})
   .then(response => response.json())
   .then(json => {
-    snap.ref.set({id_token: json.id_token}) //Update to "remove code"
-    functions.firestore.collection('credentials').doc(userId).set(json)
+    snap.ref.set({
+      id_token: json.id_token,
+      day: 0,
+      hour: 17
+    })
+    db.collection('credentials').doc(userId).set(json)
   })
   .catch(err => snap.ref.update({error: 'An error occurred! ' + err}))
 })
 
-exports.checkForUsers = functions.https.onRequest((req, res) => {
-  //Get users for this hour
-  //Publish each as a pubsub message
+exports.checkForUsers = functions.pubsub.topic('tinyjournal_hourly').onPublish(() => {
+  const date = new Date()
+  const weeklyUsers = db.collection('users').where('day', '==', date.getUTCDay()).where('hour', '==', date.getUTCHours())
+  const dailyUsers = db.collection('users').where('day', '==', -1).where('hour', '==', date.getUTCHours())
+
+  return Promise.resolve([weeklyUsers, dailyUsers])
+    .then(([weeklyUsers, dailyUsers]) => {
+      const batch = db.batch()
+      if (!weeklyUsers.empty) {
+        weeklyUsers.forEach(user => batch.set(db.collection('queue').doc(), users.data()))
+      }
+      if (!dailyUsers.empty) {
+        dailyUsers.forEach(user => batch.set(db.collection('queue').doc(), users.data()))
+      }
+      return batch.commit()
+    })
+
 })
 
-exports.initialMessage = () => {
+this.initialMessage = functions.firestore.document('queue/{userId}').onCreate((snap, context) => {
+  const userId = snap.data().userId
   //Send initial sms to a user and set appropriate sheet fields
-}
+})
 
 exports.messageResponse = () => {
   //Record message response and send next question if applicable.

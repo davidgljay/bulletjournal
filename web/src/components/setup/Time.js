@@ -12,24 +12,38 @@ class Time extends Component {
     super(props)
 
     this.state = {
-      day: 1,
+      day: 0,
       hour: 19
+    }
+
+    this.toUTC = (localHour, localDay) => {
+      const offset = new Date().getTimezoneOffset()/60
+      const hour = (hour + offset) % 24
+      let day = localDay
+      if (hour + offset > 24) {
+        day = (day + 1) % 6
+      } else if (hour + offset < 0) {
+        day = (day - 1) % 6
+      }
+      return { hour, day }
     }
 
     this.setDay = e => {
       const {userId} = this.props
+      const {hour} = this.state
       const day = e.target.value
       this.setState({day})
       firebase.firestore().collection('users').doc(userId)
-        .update({day})
+        .update(this.toUTC(hour, day))
     }
 
     this.setHour = e => {
       const {userId} = this.props
+      const {day} = this.state
       const hour = e.target.value
       this.setState({hour})
       firebase.firestore().collection('users').doc(userId)
-        .update({hour})
+        .update(this.toUTC(hour, day))
     }
   }
 
@@ -56,14 +70,14 @@ class Time extends Component {
         value={day}
         style={styles.select}
         onChange={this.setDay}>
-        <MenuItem value={0}>Day</MenuItem>
-        <MenuItem value={1}>Sunday</MenuItem>
-        <MenuItem value={2}>Monday</MenuItem>
-        <MenuItem value={3}>Tuesday</MenuItem>
-        <MenuItem value={4}>Wednesday</MenuItem>
-        <MenuItem value={5}>Thursday</MenuItem>
-        <MenuItem value={6}>Friday</MenuItem>
-        <MenuItem value={7}>Saturday</MenuItem>
+        <MenuItem value={-1}>Day</MenuItem>
+        <MenuItem value={0}>Sunday</MenuItem>
+        <MenuItem value={1}>Monday</MenuItem>
+        <MenuItem value={2}>Tuesday</MenuItem>
+        <MenuItem value={3}>Wednesday</MenuItem>
+        <MenuItem value={4}>Thursday</MenuItem>
+        <MenuItem value={5}>Friday</MenuItem>
+        <MenuItem value={6}>Saturday</MenuItem>
         <MenuItem value={null}>Never</MenuItem>
       </Select>
       <div> at </div>

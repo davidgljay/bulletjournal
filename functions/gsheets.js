@@ -1,26 +1,29 @@
-module.exports.refreshToken = (userId, refresh) => {
-  let url = 'https://www.googleapis.com/oauth2/v4/token?'
-  url += `refresh_token=${refresh}&`
-  url += `client_id=${functions.config().google.client_id}&`
-  url += `client_secret=${functions.config().google.client_secret}&`
-  url += 'grant_type=refresh_token'
+const db = require('./db')
 
-  return fetch(url, {
-      method: 'POST'
-    })
-    .then(res => res.ok ? res.json : Promise.reject('Failed to refresh token'))
-    .then(json =>
-      functions.firestore.collection(credentials).doc(userId).update({
-        access_token: json.access_token
-      })
-      .then(() => json.access_token)
+module.exports.refreshTokenIfNeeded = call => (userId, refresh, token) =>
+  call(token)
+    .catch(() =>
+      {
+        let url = 'https://www.googleapis.com/oauth2/v4/token?'
+        url += `refresh_token=${refresh}&`
+        url += `client_id=${functions.config().google.client_id}&`
+        url += `client_secret=${functions.config().google.client_secret}&`
+        url += 'grant_type=refresh_token'
+
+        return fetch(url, {
+            method: 'POST'
+          })
+          .then(res => res.ok ? res.json : Promise.reject('Failed to refresh token'))
+          .then(json =>
+            db.collection(credentials).doc(userId).update({
+              access_token: json.access_token
+            })
+            .then(() => call(json.access_token))
+          )
+      }
     )
 
-}
-
-
-
-module.exports.createSheet = (name, token) =>
+module.exports.createSheet = name => token =>
   fetch('https://sheets.googleapis.com/v4/spreadsheets', {
     method: 'POST',
     headers: {
@@ -35,7 +38,7 @@ module.exports.createSheet = (name, token) =>
   .then(res => res.ok ? res.json : Promise.reject('Failed to create spreadsheet'))
   .then(json => json.spreadsheetId)
 
-module.appendItems = (items, range, spreadsheetId, token) =>
+module.appendItems = (items, range, spreadsheetId) => token =>
   fetch(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}:append?insertDataOption=INSERT_ROWS&valueInputOption=RAW`,
     method: 'POST',
     headers: {
@@ -48,7 +51,7 @@ module.appendItems = (items, range, spreadsheetId, token) =>
   )
   .then(res => res.ok ? res.json : Promise.reject('Failed to append items to spreadsheet'))
 
-module.formatRow = (row, spreadsheetId, token) =>
+module.formatRow = (row, spreadsheetId) => token =>
   fetch(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}:batchUpdate`, {
     method: 'POST',
     headers: {
