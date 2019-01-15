@@ -1,7 +1,8 @@
 const functions = require('firebase-functions')
 const db = require('./db')
 const fetch = require('node-fetch')
-const sendSms = require('./twilio')
+const sms = require('./twilio')
+const {refreshTokenIfNeeded, createSheet, appendItems, formatRow} = require('./ghseets')
 
 
 exports.googleAuth = functions.firestore.document('users/{userId}').onCreate((snap, context) => {
@@ -45,20 +46,72 @@ exports.checkForUsers = functions.pubsub.topic('tinyjournal_hourly').onPublish((
 
 })
 
-this.initialMessage = functions.firestore.document('queue/{taskId}').onCreate((snap, context) => {
-  const {number, questions} = snap.data()
-
-  //Send initial sms to a user and set appropriate sheet fields
+this.verifyPhoneNumber = functions.firestore.document('users/{userId}').onUpdate(change => {
+  if (change.after.data().phoneConfirm !== false) {
+    return true
+  }
+  return sms(change.after.data().phone, 'Hello from TinyJournal! If you would like to enable sms journalling please respond "YES". You can type "STOP" at any time.')
 })
 
-exports.messageResponse = () => {
-  //Record message response and send next question if applicable.
+this.initialQuestions = functions.firestore.document('users/{userId}').onUpdate((change, context) => {
+    const {userId} = context
+    const questions = change.after().data().questions
+    if (change.before.data().questions !== change.after.data().questions) {
+      return db.collection('credentials').doc(userId).get()
+        .then(credentials => {
+          const {refresh_token, access_token} = credentials.data()
+          return refreshTokenIfNeeded(createSheet('Tiny Journal'))(userId, refresh_token, access_token)
+        })
+        .then(spreadsheetId =>
+          Promise.all([
+            db.collection('users').doc(userId).update({spreadhseetId, index: 0}),
+            appendItems([[getDate()].concat(questions)], 'A1', spreadsheetId)(token),
+            formatRow(0, spreadsheetId)(token)
+          ])
+        )
+        .then(() => sendSms(change.after().data().phone, 'You\'re all set up! ❤️📓 -Tiny Journal'))
+    }
+    return null
+  })
+
+exports.incomingSMS = functions.https.onRequest((req, res) => {
+  res.send('')
+  const text = req.body.text.toLowerCase()
+  const phone = req.body.phone
+  return db.collect('users').where('phone', '==', phone).get()
+    .then(userQuery => userQuery.forEach(user => {
+      switch(text) {
+        case 'yes':
+          return user.update({confirmation: 'confirmed'})
+        case 'stop':
+          return user.update({disabled: true})
+        default:
+          return questionResponse(text, phone, user.data())
+    }))
+  }
+})
+
+const questionResponse = (text, phone, user) => {
+  const index = user.index || 0
+  const column = String.fromCharCode(97 + index).toUpperCase() + '1'
+
+  return db.collection('credentials').doc(user.uid).get()
+    .then(credentials => {
+      const {access_token, refresh_token} = credentials.data()
+      return refreshTokenIfNeeded(appendItems([[text]], column, user.spreadsheet1))(access_token, refresh_token)
+    })
+    .then(() => sendSms(user.phone, user.questions[index + 1]))
+    .then(() => db.collections('users').doc(user.uid).update({index: index + 1}))
 }
 
-
-
+const getDate() => {
+  const d = new Date()
+  return `${d.getDate()}/${d.getMonth() + 1}/${d.getYear() - 100}`
+}
 
 exports.sendSms = functions.https.onRequest((req, res) => {
-  const message = req.query.text;
-  sendSms('+314-210-7659', message);
+  const message = req.query.text
+  console.log(sms);
+  sms('+314-210-7659', message)
+  res.send('')
 })
