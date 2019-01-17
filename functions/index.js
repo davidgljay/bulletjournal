@@ -9,24 +9,23 @@ exports.googleAuth = functions.firestore.document('users/{userId}').onCreate((sn
   if (!snap.data().code) {
     return false
   }
-  const {userId} = context
+  const userId = snap.id
   let url = 'https://www.googleapis.com/oauth2/v4/token?'
   url += `code=${snap.data().code}&`
   url += `client_id=${functions.config().google.client_id}&`
   url += `client_secret=${functions.config().google.client_secret}&`
-  url += `redirect_uri=${encodeURIComponent('https://27c6e919.ngrok.io/auth')}&`
+  url += `redirect_uri=${encodeURIComponent('https://dj-bullet-journal.firebaseapp.com/auth')}&`
   url += 'grant_type=authorization_code'
 
   return fetch(url, {method: 'POST'})
   .then(response => response.json())
   .then(json => {
-    snap.ref.set({
-      id_token: json.id_token,
-      id: userId
+    snap.ref.update({
+      id_token: json.id_token
     })
     return db.collection('credentials').doc(userId).set(json)
   })
-  .catch(err => snap.ref.update({error: 'An error occurred! ' + err + ',' + db}))
+  .catch(err => snap.ref.update({error: 'An error occurred! ' + err }))
 })
 
 exports.checkForUsers = functions.pubsub.topic('tinyjournal_hourly').onPublish(() => {
@@ -50,14 +49,13 @@ exports.checkForUsers = functions.pubsub.topic('tinyjournal_hourly').onPublish((
 
 exports.verifyPhoneNumber = functions.firestore.document('users/{userId}').onUpdate(change => {
   if (change.after.data().phoneConfirm !== false) {
-    return true
+    return null
   }
   return sms(change.after.data().phone, 'Hello from TinyJournal! If you would like to enable sms journalling please respond "YES". You can type "STOP" at any time.')
 })
 
 exports.initialQuestions = functions.firestore.document('users/{userId}').onUpdate((change, context) => {
-    const {userId} = context
-    const questions = change.after().data().questions
+    const questions = change.after.data().questions
     if (change.before.data().questions !== change.after.data().questions) {
       return db.collection('credentials').doc(userId).get()
         .then(credentials => {
@@ -71,7 +69,7 @@ exports.initialQuestions = functions.firestore.document('users/{userId}').onUpda
             formatRow(0, spreadsheetId)(token)
           ])
         )
-        .then(() => sendSms(change.after().data().phone, 'You\'re all set up! ❤️📓 -Tiny Journal'))
+        .then(() => sendSms(change.after.data().phone, 'You\'re all set up! ❤️📓 -Tiny Journal'))
     }
     return null
   })
@@ -91,7 +89,7 @@ exports.messageUser = functions.firestore.document('queue/{taskId}').onCreate((s
 
 exports.incomingSMS = functions.https.onRequest((req, res) => {
   res.send('')
-  const text = req.body.text.toLowerCase()
+  const text = req.body.Body.toLowerCase()
   const phone = req.body.phone
   return db.collect('users').where('phone', '==', phone).get()
     .then(userQuery => userQuery.forEach(user => {
