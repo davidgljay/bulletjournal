@@ -2,13 +2,14 @@ const functions = require('firebase-functions')
 const db = require('./db')
 const fetch = require('node-fetch')
 const sms = require('./twilio')
-const {refreshTokenIfNeeded, createSheet, appendItems, formatRow} = require('./ghseets')
+const {refreshTokenIfNeeded, createSheet, appendItems, formatRow} = require('./gsheets')
 
 
 exports.googleAuth = functions.firestore.document('users/{userId}').onCreate((snap, context) => {
   if (!snap.data().code) {
     return false
   }
+  const {userId} = context
   let url = 'https://www.googleapis.com/oauth2/v4/token?'
   url += `code=${snap.data().code}&`
   url += `client_id=${functions.config().google.client_id}&`
@@ -21,6 +22,7 @@ exports.googleAuth = functions.firestore.document('users/{userId}').onCreate((sn
   .then(json => {
     snap.ref.set({
       id_token: json.id_token,
+      id: userId
     })
     return db.collection('credentials').doc(userId).set(json)
   })
@@ -32,7 +34,7 @@ exports.checkForUsers = functions.pubsub.topic('tinyjournal_hourly').onPublish((
   const weeklyUsers = db.collection('users').where('day', '==', date.getUTCDay()).where('hour', '==', date.getUTCHours())
   const dailyUsers = db.collection('users').where('day', '==', -1).where('hour', '==', date.getUTCHours())
 
-  return Promise.resolve([weeklyUsers, dailyUsers])
+  return Promise.all([weeklyUsers, dailyUsers])
     .then(([weeklyUsers, dailyUsers]) => {
       const batch = db.batch()
       if (!weeklyUsers.empty) {
@@ -46,14 +48,14 @@ exports.checkForUsers = functions.pubsub.topic('tinyjournal_hourly').onPublish((
 
 })
 
-this.verifyPhoneNumber = functions.firestore.document('users/{userId}').onUpdate(change => {
+exports.verifyPhoneNumber = functions.firestore.document('users/{userId}').onUpdate(change => {
   if (change.after.data().phoneConfirm !== false) {
     return true
   }
   return sms(change.after.data().phone, 'Hello from TinyJournal! If you would like to enable sms journalling please respond "YES". You can type "STOP" at any time.')
 })
 
-this.initialQuestions = functions.firestore.document('users/{userId}').onUpdate((change, context) => {
+exports.initialQuestions = functions.firestore.document('users/{userId}').onUpdate((change, context) => {
     const {userId} = context
     const questions = change.after().data().questions
     if (change.before.data().questions !== change.after.data().questions) {
@@ -74,6 +76,19 @@ this.initialQuestions = functions.firestore.document('users/{userId}').onUpdate(
     return null
   })
 
+exports.messageUser = functions.firestore.document('queue/{taskId}').onCreate((snap, context) => {
+  const {id, questions, spreadsheetId, phone} = snap.data()
+  return db.collection('credentials').doc(id).get()
+    .then(credentials => {
+      const {refresh_token, access_token} = credentials.data()
+      return refreshTokenIfNeeded(appendItems([[getDate()]], 'A1', spreadsheetId))(access_token, refresh_token)
+    })
+    .then(() => collection('users').doc(id).update({index: 0}))
+    .then(() => sendSms(phone, questions[0]))
+    .then(() => snap.delete())
+    .catch(err => console.log('Error sending initial question to user', err))
+})
+
 exports.incomingSMS = functions.https.onRequest((req, res) => {
   res.send('')
   const text = req.body.text.toLowerCase()
@@ -87,24 +102,25 @@ exports.incomingSMS = functions.https.onRequest((req, res) => {
           return user.update({disabled: true})
         default:
           return questionResponse(text, phone, user.data())
-    }))
-  }
+      }
+    })
+  )
 })
 
 const questionResponse = (text, phone, user) => {
   const index = user.index || 0
   const column = String.fromCharCode(97 + index).toUpperCase() + '1'
 
-  return db.collection('credentials').doc(user.uid).get()
+  return db.collection('credentials').doc(user.id).get()
     .then(credentials => {
       const {access_token, refresh_token} = credentials.data()
-      return refreshTokenIfNeeded(appendItems([[text]], column, user.spreadsheet1))(access_token, refresh_token)
+      return refreshTokenIfNeeded(appendItems([[text]], column, user.spreadsheetId))(access_token, refresh_token)
     })
     .then(() => sendSms(user.phone, user.questions[index + 1]))
-    .then(() => db.collections('users').doc(user.uid).update({index: index + 1}))
+    .then(() => db.collections('users').doc(user.id).update({index: index + 1}))
 }
 
-const getDate() => {
+const getDate = () => {
   const d = new Date()
   return `${d.getDate()}/${d.getMonth() + 1}/${d.getYear() - 100}`
 }
