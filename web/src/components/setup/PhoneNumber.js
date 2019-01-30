@@ -37,9 +37,11 @@ class PhoneNumber extends Component {
       } else {
         this.setState({error: null})
       }
+      const regPhone = /([0-9]{3}).([0-9]{3}).([0-9]{4})/.exec(phone)
+      const formattedPhone = `+1${regPhone[1]}${regPhone[2]}${regPhone[3]}`
       firebase.firestore().collection('users').doc(userId)
         .update({
-          phone,
+          phone: formattedPhone,
           phoneConfirmed: false
         })
       this.setState({
