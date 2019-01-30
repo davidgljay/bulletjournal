@@ -3,26 +3,26 @@ const db = require('./db')
 module.exports.refreshTokenIfNeeded = call => (userId, refresh, token) =>
   Promise.all([call(token), token])
     .catch(() => {
-        let url = 'https://www.googleapis.com/oauth2/v4/token?'
-        url += `refresh_token=${refresh}&`
-        url += `client_id=${functions.config().google.client_id}&`
-        url += `client_secret=${functions.config().google.client_secret}&`
-        url += 'grant_type=refresh_token'
+      let url = 'https://www.googleapis.com/oauth2/v4/token?'
+      url += `refresh_token=${refresh}&`
+      url += `client_id=${functions.config().google.client_id}&`
+      url += `client_secret=${functions.config().google.client_secret}&`
+      url += 'grant_type=refresh_token'
 
-        return fetch(url, {
-            method: 'POST'
+      return fetch(url, {
+          method: 'POST'
+        })
+        .then(res => res.ok ? res.json : Promise.reject(new Error('Failed to refresh token')))
+        .then(json =>
+          db.collection(credentials).doc(userId).update({
+            access_token: json.access_token
           })
-          .then(res => res.ok ? res.json : Promise.reject(new Error('Failed to refresh token')))
-          .then(json =>
-            db.collection(credentials).doc(userId).update({
-              access_token: json.access_token
-            })
-            .then(() => Promise.all([
-                call(json.access_token),
-                json.access_token
-              ])
-            )
+          .then(() => Promise.all([
+              call(json.access_token),
+              json.access_token
+            ])
           )
+        )
       })
 
 module.exports.createSheet = name => token =>

@@ -25,7 +25,7 @@ exports.googleAuth = functions.firestore.document('users/{userId}').onCreate((sn
     })
     return db.collection('credentials').doc(userId).set(json)
   })
-  .catch(err => snap.ref.update({error: 'An error occurred! ' + err }))
+  .catch(err => console.log('An error occurred! ' + err))
 })
 
 exports.checkForUsers = functions.pubsub.topic('tinyjournal_hourly').onPublish(() => {
@@ -52,6 +52,9 @@ exports.verifyPhoneNumber = functions.firestore.document('users/{userId}').onUpd
     return null
   }
   return sms(change.after.data().phone, 'Hello from TinyJournal! If you would like to enable sms journalling please respond "YES". You can type "STOP" at any time.')
+    .then(res => res.ok ? res.json() : Promise.reject(res.text()))
+    .then(json => console.log(json))
+    .catch(err => console.log(err))
 })
 
 exports.initialQuestions = functions.firestore.document('users/{userId}').onUpdate((change, context) => {
@@ -69,7 +72,7 @@ exports.initialQuestions = functions.firestore.document('users/{userId}').onUpda
             formatRow(0, spreadsheetId)(token)
           ])
         )
-        .then(() => sendSms(change.after.data().phone, 'You\'re all set up! ❤️📓 -Tiny Journal'))
+        .then(() => sms(change.after.data().phone, 'You\'re all set up! ❤️📓 -Tiny Journal'))
     }
     return null
   })
@@ -82,7 +85,7 @@ exports.messageUser = functions.firestore.document('queue/{taskId}').onCreate((s
       return refreshTokenIfNeeded(appendItems([[getDate()]], 'A1', spreadsheetId))(access_token, refresh_token)
     })
     .then(() => collection('users').doc(id).update({index: 0}))
-    .then(() => sendSms(phone, questions[0]))
+    .then(() => sms(phone, questions[0]))
     .then(() => snap.delete())
     .catch(err => console.log('Error sending initial question to user', err))
 })
@@ -114,7 +117,7 @@ const questionResponse = (text, phone, user) => {
       const {access_token, refresh_token} = credentials.data()
       return refreshTokenIfNeeded(appendItems([[text]], column, user.spreadsheetId))(access_token, refresh_token)
     })
-    .then(() => sendSms(user.phone, user.questions[index + 1]))
+    .then(() => sms(user.phone, user.questions[index + 1]))
     .then(() => db.collections('users').doc(user.id).update({index: index + 1}))
 }
 
@@ -123,9 +126,9 @@ const getDate = () => {
   return `${d.getDate()}/${d.getMonth() + 1}/${d.getYear() - 100}`
 }
 
-exports.sendSms = functions.https.onRequest((req, res) => {
-  const message = req.query.text
-  console.log(sms);
-  sms('+314-210-7659', message)
-  res.send('')
-})
+// exports.sendSms = functions.https.onRequest((req, res) => {
+//   const message = req.query.text
+//   console.log(sms);
+//   sms('+314-210-7659', message)
+//   res.send('')
+// })
