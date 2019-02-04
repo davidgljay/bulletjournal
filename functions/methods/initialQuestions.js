@@ -4,13 +4,17 @@ const {getDate} = require('../date')
 
 module.exports = (before, after, id) => {
   const questions = after.questions
+  console.log('Updating questions');
   if (before.questions !== after.questions) {
+    console.log('Updating questions');
     return db.collection('credentials').doc(id).get()
       .then(credentials => {
         const {refresh_token, access_token} = credentials.data()
         if (after.spreadsheetId) {
+          console.log('Spreadsheet id found');
           return spreadsheetId
         }
+        console.log('Creating spreadsheet');
         return refreshTokenIfNeeded(createSheet('Tiny Journal'))(id, refresh_token, access_token)
       })
       .then(spreadsheetId =>

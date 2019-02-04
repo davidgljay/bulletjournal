@@ -1,4 +1,5 @@
 const db = require('./db')
+const fetch = require('node-fetch')
 
 module.exports.refreshTokenIfNeeded = call => (userId, refresh, token) =>
   Promise.all([call(token), token])
@@ -31,7 +32,7 @@ module.exports.createSheet = name => token =>
     headers: {
       'Authorization': `Bearer ${token}`
     },
-    body: JSON.parse({
+    body: JSON.stringify({
       properties:{
         title: 'Tiny Journal'
       }
@@ -47,7 +48,7 @@ module.appendItems = (items, range, spreadsheetId) => token =>
       headers: {
         'Authorization': `Bearer ${token}`
       },
-      body: JSON.parse({
+      body: JSON.stringify({
         range,
         values: [items]
       })
@@ -61,7 +62,7 @@ module.formatRow = (row, spreadsheetId) => token =>
     headers: {
       'Authorization': `Bearer ${token}`
     },
-    body: JSON.parse({
+    body: JSON.stringify({
       "requests": [
         {
           "repeatCell": {
