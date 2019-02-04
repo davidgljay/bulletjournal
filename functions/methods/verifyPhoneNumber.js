@@ -1,6 +1,6 @@
 const sms = require('../twilio')
 
-module.exports.default = (before, after, id) => {
+module.exports = (before, after, id) => {
   if (after.phoneConfirmed !== false) {
     return null
   }

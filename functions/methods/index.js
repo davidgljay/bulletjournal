@@ -5,7 +5,7 @@ const initialQuestions = require('./initialQuestions')
 const messageUser = require('./messageUser')
 const incomingSMS = require('./incomingSMS')
 
-exports.default = {
+module.exports = {
   googleAuth,
   checkForUsers,
   verifyPhoneNumber,

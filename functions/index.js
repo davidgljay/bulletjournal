@@ -19,12 +19,13 @@ exports.onPubsubPublish = functions.pubsub.topic('tinyjournal_hourly')
   .onPublish(checkForUsers)
 
 exports.onUserUpdate = functions.firestore.document('users/{userId}')
-  .onUpdate(change =>
-    Promise.all([
+  .onUpdate(change => {
+    console.log(verifyPhoneNumber, methods);
+    return Promise.all([
       verifyPhoneNumber(change.before.data(), change.after.data(), change.after.id),
       initialQuestions(change.before.data(), change.after.data(), change.after.id)
     ])
-  )
+  })
 
 exports.onQueueCreate = functions.firestore.document('queue/{taskId}')
   .onCreate(snap => messageUser(snap.data(), snap.id))

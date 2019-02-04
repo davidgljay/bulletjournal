@@ -2,7 +2,7 @@ const functions = require('firebase-functions')
 const db = require('../db')
 const fetch = require('node-fetch')
 
-exports.default = (data, id) => {
+module.exports = (data, id) => {
   if (data.code) {
     return false
   }

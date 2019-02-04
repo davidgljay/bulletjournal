@@ -1,7 +1,7 @@
 const db = require('../db')
 const {refreshTokenIfNeeded, createSheet, appendItems, formatRow} = require('../gsheets')
 
-module.exports.defualt = (body, res) => {
+module.exports = (body, res) => {
   const text = body.Body.toLowerCase()
   const phone = body.From
   console.log('phone', phone)
