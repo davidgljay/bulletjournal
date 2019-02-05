@@ -1,4 +1,4 @@
 module.exports.getDate = () => {
   const d = new Date()
-  return `${d.getDate()}/${d.getMonth() + 1}/${d.getYear() - 100}`
+  return `${d.getMonth() + 1}/${d.getDate()}/${d.getYear() - 100}`
 }
