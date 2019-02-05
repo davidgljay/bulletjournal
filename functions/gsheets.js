@@ -1,7 +1,8 @@
+const functions = require('firebase-functions')
 const db = require('./db')
 const fetch = require('node-fetch')
 
-module.exports.refreshTokenIfNeeded = call => (userId, refresh, token) =>
+module.exports.refreshTokenIfNeeded = call => (credId, refresh, token) =>
   Promise.all([call(token), token])
     .catch(() => {
       let url = 'https://www.googleapis.com/oauth2/v4/token?'
@@ -10,19 +11,21 @@ module.exports.refreshTokenIfNeeded = call => (userId, refresh, token) =>
       url += `client_secret=${functions.config().google.client_secret}&`
       url += 'grant_type=refresh_token'
 
+      let access_token
       return fetch(url, {
           method: 'POST'
         })
-        .then(res => res.ok ? res.json : Promise.reject(new Error('Failed to refresh token')))
-        .then(json =>
-          db.collection(credentials).doc(userId).update({
-            access_token: json.access_token
+        .then(res => res.ok ? res.json() : Promise.reject(new Error('Failed to refresh token')))
+        .then(json => {
+            access_token = json.access_token
+            return db.collection('credentials').doc(credId).update({
+              access_token
+            })
           })
-          .then(() => Promise.all([
-              call(json.access_token),
-              json.access_token
-            ])
-          )
+        .then(() => Promise.all([
+            call(access_token),
+            access_token
+          ])
         )
       })
 
@@ -38,7 +41,7 @@ module.exports.createSheet = name => token =>
       }
     })
   })
-  .then(res => res.ok ? res.json : Promise.reject(new Error('Failed to create spreadsheet')))
+  .then(res => res.ok ? res.json() : Promise.reject(new Error('Failed to create spreadsheet')))
   .then(json => json.spreadsheetId)
 
 module.appendItems = (items, range, spreadsheetId) => token =>
@@ -54,7 +57,7 @@ module.appendItems = (items, range, spreadsheetId) => token =>
       })
     }
   )
-  .then(res => res.ok ? res.json : Promise.reject(new Error('Failed to append items to spreadsheet')))
+  .then(res => res.ok ? res.json() : Promise.reject(new Error('Failed to append items to spreadsheet')))
 
 module.formatRow = (row, spreadsheetId) => token =>
   fetch(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}:batchUpdate`, {
@@ -124,4 +127,4 @@ module.formatRow = (row, spreadsheetId) => token =>
       ]
     })
   })
-  .then(res => res.ok ? res.json : Promise.reject(new Error('Failed to format row')))
+  .then(res => res.ok ? res.json() : Promise.reject(new Error('Failed to format row')))
