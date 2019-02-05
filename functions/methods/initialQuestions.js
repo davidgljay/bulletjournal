@@ -1,29 +1,30 @@
 const db = require('../db')
 const {refreshTokenIfNeeded, createSheet, appendItems, formatRow} = require('../gsheets')
 const {getDate} = require('../date')
+const sms = require('../twilio')
 
 module.exports = (before, after, id) => {
   const questions = after.questions
-  console.log('Updating questions');
+  let spreadsheet
+  let accessToken
+  let refreshToken
   if (before.questions !== after.questions) {
-    console.log('Updating questions');
-    return db.collection('credentials').doc(id).get()
+    return db.collection('credentials').doc(before.credId).get()
       .then(credentials => {
         const {refresh_token, access_token} = credentials.data()
+        refreshToken = refreshToken
         if (after.spreadsheetId) {
-          console.log('Spreadsheet id found');
-          return spreadsheetId
+          return [after.spreadsheetId, access_token]
         }
-        console.log('Creating spreadsheet');
-        return refreshTokenIfNeeded(createSheet('Tiny Journal'))(id, refresh_token, access_token)
+        return refreshTokenIfNeeded(createSheet('Tiny Journal'))(before.credId, refresh_token, access_token)
       })
-      .then(spreadsheetId =>
-        Promise.all([
-          db.collection('users').doc(id).update({spreadhseetId, index: 0}),
-          appendItems([[getDate()].concat(questions)], 'A1', spreadsheetId)(token),
-          formatRow(0, spreadsheetId)(token)
-        ])
-      )
+      .then(([spreadsheetId, token]) => {
+        spreadsheet = spreadsheetId
+        accessToken = token
+        return db.collection('users').doc(id).update({spreadsheetId, index: 0})
+      })
+      .then(() => refreshTokenIfNeeded(appendItems([[getDate()].concat(questions)], 'A1', spreadsheet))(before.credId, refreshToken, accessToken))
+      .then(([_, token]) => formatRow(0, spreadsheet)(token))
       .then(() => sms(after.phone, 'You\'re all set up! ❤️📓 -Tiny Journal'))
   }
   return null

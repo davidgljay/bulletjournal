@@ -4,10 +4,8 @@ const {refreshTokenIfNeeded, createSheet, appendItems, formatRow} = require('../
 module.exports = (body, res) => {
   const text = body.Body.toLowerCase()
   const phone = body.From
-  console.log('phone', phone)
   return db.collection('users').where('phone', '==', phone).get()
     .then(userQuery => userQuery.forEach(user => {
-      console.log('user', user)
       switch(text) {
         case 'yes':
           return db.collection('users').doc(user.id).update({phoneConfirmed: true})

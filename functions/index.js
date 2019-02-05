@@ -30,7 +30,11 @@ exports.onQueueCreate = functions.firestore.document('queue/{taskId}')
 exports.incomingSMS = functions.https.onRequest((req, res) => incomingSMS(req.body, res))
 
 /* Tests */
-exports.testonUserCreate = functions.https.onRequest((req, res) => googleAuth(req.body.data, req.body.id, db.collection('users').doc(req.body.id)))
+exports.test = functions.https.onRequest((req, res) =>
+  initialQuestions(req.body.before, req.body.after, req.body.id)
+  .then(r => res.send(r))
+  .catch(e => res.status(500).send('' + e))
+)
 
 // exports.sendSms = functions.https.onRequest((req, res) => {
 //   const message = req.query.text
