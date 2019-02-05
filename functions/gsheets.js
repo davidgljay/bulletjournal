@@ -41,25 +41,26 @@ module.exports.createSheet = name => token =>
       }
     })
   })
-  .then(res => res.ok ? res.json() : Promise.reject(new Error('Failed to create spreadsheet')))
+  .then(res => res.ok ? res.json() : Promise.reject(new Error('Failed to create spreadsheet: ' + res.status)))
   .then(json => json.spreadsheetId)
 
-module.appendItems = (items, range, spreadsheetId) => token =>
+module.exports.appendItems = (items, range, spreadsheetId) => token =>
   fetch(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}:append?insertDataOption=INSERT_ROWS&valueInputOption=RAW`,
-    {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${token}`
-      },
-      body: JSON.stringify({
-        range,
-        values: [items]
-      })
-    }
-  )
-  .then(res => res.ok ? res.json() : Promise.reject(new Error('Failed to append items to spreadsheet')))
+      {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          range,
+          values: items
+        })
+      }
+    )
+    .then(res => res.ok ? res.json() : Promise.reject(new Error('Failed to append items to spreadsheet: ' + res.status + ' ' + res.body.error)))
 
-module.formatRow = (row, spreadsheetId) => token =>
+
+module.exports.formatRow = (row, spreadsheetId) => token =>
   fetch(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}:batchUpdate`, {
     method: 'POST',
     headers: {
@@ -77,8 +78,8 @@ module.formatRow = (row, spreadsheetId) => token =>
               "userEnteredFormat": {
                 "backgroundColor": {
                   "red": 0.0,
-                  "green": 158.0,
-                  "blue": 85.0
+                  "green": 0.62,
+                  "blue": 0.33
                 },
                 "horizontalAlignment" : "CENTER",
                 "textFormat": {
