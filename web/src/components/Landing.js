@@ -49,7 +49,7 @@ class Landing extends Component {
                     'redirect_uri': `https://${window.location.host}/auth`,
                     'response_type': 'code',
                     'access_type': 'offline',
-                    'scope': 'openid',
+                    'scope': 'https://www.googleapis.com/auth/drive.file',
                     'prompt': 'consent', //TODO: Remove after oauth development
                     'include_granted_scopes': 'true',
                     'state': authKey};
