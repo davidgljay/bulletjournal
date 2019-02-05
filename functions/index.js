@@ -13,7 +13,7 @@ const {
 } = require('./methods')
 
 exports.onUserCreate = functions.firestore.document('users/{userId}')
-  .onCreate((snap, context) => googleAuth(snap.data(), snap.id))
+  .onCreate((snap, context) => googleAuth(snap.data(), snap.id, snap.ref))
 
 exports.onPubsubPublish = functions.pubsub.topic('tinyjournal_hourly')
   .onPublish(checkForUsers)
@@ -25,10 +25,12 @@ exports.onUserUpdate = functions.firestore.document('users/{userId}')
     ]))
 
 exports.onQueueCreate = functions.firestore.document('queue/{taskId}')
-  .onCreate(snap => messageUser(snap.data(), snap.id))
+  .onCreate(snap => messageUser(snap.data(), snap.id, snap.ref))
 
 exports.incomingSMS = functions.https.onRequest((req, res) => incomingSMS(req.body, res))
 
+/* Tests */
+exports.testonUserCreate = functions.https.onRequest((req, res) => googleAuth(req.body.data, req.body.id, db.collection('users').doc(req.body.id)))
 
 // exports.sendSms = functions.https.onRequest((req, res) => {
 //   const message = req.query.text
