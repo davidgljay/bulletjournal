@@ -12,7 +12,7 @@ module.exports = (before, after, id) => {
     return db.collection('credentials').doc(before.credId).get()
       .then(credentials => {
         const {refresh_token, access_token} = credentials.data()
-        refreshToken = refreshToken
+        refreshToken = refresh_token
         if (after.spreadsheetId) {
           return [after.spreadsheetId, access_token]
         }
