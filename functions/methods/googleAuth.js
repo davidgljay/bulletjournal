@@ -2,8 +2,8 @@ const functions = require('firebase-functions')
 const db = require('../db')
 const fetch = require('node-fetch')
 
-module.exports = (data, id) => {
-  if (data.code) {
+module.exports = (data, id, ref) => {
+  if (!data.code) {
     return false
   }
   const userId = id
@@ -17,10 +17,11 @@ module.exports = (data, id) => {
   return fetch(url, {method: 'POST'})
   .then(response => response.json())
   .then(json => {
-    snap.ref.update({
+    ref.update({
       id_token: json.id_token
     })
-    return db.collection('credentials').doc(userId).set(json)
+    return db.collection('credentials').add(Object.assign({}, json, {userId}))
+      .then(cred => db.collection('users').doc(userId).update({credId: cred.id}))
   })
   .catch(err => console.log('An error occurred! ' + err))
 }
