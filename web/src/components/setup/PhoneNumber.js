@@ -45,6 +45,7 @@ class PhoneNumber extends Component {
           phoneConfirmed: false
         })
       this.setState({
+        phoneNumber: formattedPhone,
         confirmation: 'confirming'
       })
       const phoneUnsub = firebase.firestore().collection('users').doc(userId)
