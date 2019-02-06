@@ -1,15 +1,18 @@
 const db = require('../db')
 const {refreshTokenIfNeeded, appendItems} = require('../gsheets')
 const {getDate} = require('../date')
+const sms = require('../twilio')
 
-module.exports = ({questions, spreadsheetId, phone}, id, ref) => {
-  return db.collection('credentials').doc(id).get()
+module.exports = ({questions, spreadsheetId, phone, credId, userId}, id, ref) => {
+  return db.collection('credentials').doc(credId).get()
     .then(credentials => {
       const {refresh_token, access_token} = credentials.data()
-      return refreshTokenIfNeeded(appendItems([[getDate()]], 'A1', spreadsheetId))(access_token, refresh_token)
+      return refreshTokenIfNeeded(appendItems([[getDate()]], 'A1', spreadsheetId))(credId, refresh_token, access_token)
     })
-    .then(() => collection('users').doc(id).update({index: 0}))
+    .then(() => {
+      return db.collection('users').doc(userId).update({index: 0})
+    })
     .then(() => sms(phone, questions[0]))
     .then(() => ref.delete())
-    .catch(err => console.log('Error sending initial question to user', err))
+    .catch(err => Promise.reject(new Error('Failed to send initial message. ' + err)))
 }
