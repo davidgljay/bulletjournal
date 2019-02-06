@@ -16,7 +16,7 @@ exports.onUserCreate = functions.firestore.document('users/{userId}')
   .onCreate((snap, context) => googleAuth(snap.data(), snap.id, snap.ref))
 
 exports.onPubsubPublish = functions.pubsub.topic('tinyjournal_hourly')
-  .onPublish(checkForUsers)
+  .onPublish(() => checkForUsers(new Date().getUTCHours(), new Date().getUTCDay()))
 
 exports.onUserUpdate = functions.firestore.document('users/{userId}')
   .onUpdate(change => Promise.all([
@@ -31,7 +31,7 @@ exports.incomingSMS = functions.https.onRequest((req, res) => incomingSMS(req.bo
 
 /* Tests */
 exports.test = functions.https.onRequest((req, res) =>
-  initialQuestions(req.body.before, req.body.after, req.body.id)
+  messageUser(req.body.data, req.body.id, db.collection('queue').doc(req.body.id))
   .then(r => res.send(r))
   .catch(e => res.status(500).send('' + e))
 )
