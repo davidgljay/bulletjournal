@@ -8,7 +8,7 @@ module.exports = (before, after, id) => {
   let spreadsheet
   let accessToken
   let refreshToken
-  if (before.questions !== after.questions) {
+  if (before.questions.toString() !== after.questions.toString()) {
     return db.collection('credentials').doc(before.credId).get()
       .then(credentials => {
         const {refresh_token, access_token} = credentials.data()
