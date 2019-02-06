@@ -57,7 +57,7 @@ module.exports.appendItems = (items, range, spreadsheetId) => token =>
         })
       }
     )
-    .then(res => res.ok ? res.json() : Promise.reject(new Error('Failed to append items to spreadsheet: ' + res.status + ' ' + res.body.error)))
+    .then(res => res.ok ? res.json() : Promise.reject(new Error('Failed to append items to spreadsheet: ' + res.status)))
 
 
 module.exports.formatRow = (row, spreadsheetId) => token =>
