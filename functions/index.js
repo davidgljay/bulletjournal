@@ -27,11 +27,16 @@ exports.onUserUpdate = functions.firestore.document('users/{userId}')
 exports.onQueueCreate = functions.firestore.document('queue/{taskId}')
   .onCreate(snap => messageUser(snap.data(), snap.id, snap.ref))
 
-exports.incomingSMS = functions.https.onRequest((req, res) => incomingSMS(req.body, res))
+exports.incomingSMS = functions.https.onRequest((req, res) => incomingSMS(req.body, res)
+  .catch(err => {
+    console.log(err)
+    res.send('')
+  })
+)
 
 /* Tests */
 exports.test = functions.https.onRequest((req, res) =>
-  messageUser(req.body.data, req.body.id, db.collection('queue').doc(req.body.id))
+  incomingS(req.body.data, req.body.id, db.collection('queue').doc(req.body.id))
   .then(r => res.send(r))
   .catch(e => res.status(500).send('' + e))
 )

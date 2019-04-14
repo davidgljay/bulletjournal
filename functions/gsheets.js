@@ -45,7 +45,8 @@ module.exports.createSheet = name => token =>
   .then(json => json.spreadsheetId)
 
 module.exports.appendItems = (items, range, spreadsheetId) => token =>
-  fetch(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}:append?insertDataOption=INSERT_ROWS&valueInputOption=RAW`,
+{
+  return fetch(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}:append?valueInputOption=RAW`,
       {
         method: 'POST',
         headers: {
@@ -58,6 +59,8 @@ module.exports.appendItems = (items, range, spreadsheetId) => token =>
       }
     )
     .then(res => res.ok ? res.json() : Promise.reject(new Error('Failed to append items to spreadsheet: ' + res.status)))
+}
+
 
 
 module.exports.formatRow = (row, spreadsheetId) => token =>

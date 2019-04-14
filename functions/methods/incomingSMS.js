@@ -1,5 +1,6 @@
 const db = require('../db')
 const {refreshTokenIfNeeded, createSheet, appendItems, formatRow} = require('../gsheets')
+const sms = require('../twilio')
 
 module.exports = (body, res) => {
   const text = body.Body.toLowerCase()
@@ -20,14 +21,18 @@ module.exports = (body, res) => {
 }
 
 const questionResponse = (text, phone, user, userId) => {
+  // const index = user.index || 0
   const index = user.index || 0
-  const column = String.fromCharCode(97 + index).toUpperCase() + '1'
+  const row = user.row || 2
+  const range = String.fromCharCode(98 + index).toUpperCase() + row + ':' + String.fromCharCode(98 + index).toUpperCase() + row
 
-  return db.collection('credentials').doc(userId).get()
+  return db.collection('credentials').doc(user.credId).get()
     .then(credentials => {
       const {access_token, refresh_token} = credentials.data()
-      return refreshTokenIfNeeded(appendItems([[text]], column, user.spreadsheetId))(access_token, refresh_token)
+      // console.log('range', text, range, user.spreadsheetId);
+      return refreshTokenIfNeeded(appendItems([[text]], range, user.spreadsheetId))(user.credId, refresh_token, access_token)
     })
-    .then(() => sms(phone, user.questions[index + 1]))
-    .then(() => db.collection('users').doc(userId).update({index: index + 1}))
+    .then(() => user.questions.length === user.index - 1 ? sms(user.phone, 'All set for now!') : sms(user.phone, user.questions[index + 1]))
+    .then(() => res.ok ? res.json : Promise.reject('Failed to update spreadsheet'))
+    .then(() => db.collection('users').doc(userId).update({index: user.questions.length === user.index - 1 ? 0 : index + 1 }))
 }
