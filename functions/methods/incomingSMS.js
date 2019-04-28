@@ -21,18 +21,18 @@ module.exports = (body, res) => {
 }
 
 const questionResponse = (text, phone, user, userId) => {
-  // const index = user.index || 0
+
   const index = user.index || 0
   const row = user.row || 2
   const range = String.fromCharCode(98 + index).toUpperCase() + row + ':' + String.fromCharCode(98 + index).toUpperCase() + row
-
   return db.collection('credentials').doc(user.credId).get()
     .then(credentials => {
       const {access_token, refresh_token} = credentials.data()
-      // console.log('range', text, range, user.spreadsheetId);
       return refreshTokenIfNeeded(appendItems([[text]], range, user.spreadsheetId))(user.credId, refresh_token, access_token)
     })
-    .then(() => user.questions.length === user.index - 1 ? sms(user.phone, 'All set for now!') : sms(user.phone, user.questions[index + 1]))
-    .then(() => res.ok ? res.json : Promise.reject('Failed to update spreadsheet'))
-    .then(() => db.collection('users').doc(userId).update({index: user.questions.length === user.index - 1 ? 0 : index + 1 }))
+    .then(() => {
+      console.log(user.questions.length === index - 1)
+      return user.questions.length === index + 1 ? sms(user.phone, 'All set for now!') : sms(user.phone, user.questions[index + 1])
+    })
+    .then(() => db.collection('users').doc(userId).update({index: user.questions.length === index + 1 ? 0 : index + 1 }))
 }
