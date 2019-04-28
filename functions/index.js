@@ -35,15 +35,8 @@ exports.incomingSMS = functions.https.onRequest((req, res) => incomingSMS(req.bo
 )
 
 /* Tests */
-exports.test = functions.https.onRequest((req, res) =>
-  incomingS(req.body.data, req.body.id, db.collection('queue').doc(req.body.id))
-  .then(r => res.send(r))
-  .catch(e => res.status(500).send('' + e))
-)
-
-// exports.sendSms = functions.https.onRequest((req, res) => {
-//   const message = req.query.text
-//   console.log(sms);
-//   sms('+314-210-7659', message)
-//   res.send('')
-// })
+// exports.test = functions.https.onRequest((req, res) =>
+//   checkForUsers(3, 0)
+//   .then(r => res.send(r))
+//   .catch(e => res.status(500).send('' + e))
+// )

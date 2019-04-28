@@ -31,7 +31,6 @@ const questionResponse = (text, phone, user, userId) => {
       return refreshTokenIfNeeded(appendItems([[text]], range, user.spreadsheetId))(user.credId, refresh_token, access_token)
     })
     .then(() => {
-      console.log(user.questions.length === index - 1)
       return user.questions.length === index + 1 ? sms(user.phone, 'All set for now!') : sms(user.phone, user.questions[index + 1])
     })
     .then(() => db.collection('users').doc(userId).update({index: user.questions.length === index + 1 ? 0 : index + 1 }))
