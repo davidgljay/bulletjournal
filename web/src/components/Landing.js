@@ -5,7 +5,6 @@ import phoneEmoji from '../assets/mobile-phone.png'
 import spreadsheetImg1 from '../assets/spreadsheet1.png'
 import spreadsheetImg2 from '../assets/spreadsheet2.png'
 import spreadsheetImg3 from '../assets/spreadsheet3.png'
-import spreadsheetImg4 from '../assets/spreadsheet4.png'
 
 class Landing extends Component {
   constructor (props) {
@@ -19,14 +18,12 @@ class Landing extends Component {
       'What am I grateful for?',
       'How am I feeling this week?',
       'What did I learn this week?',
-      'What surprised me?'
     ]
 
     this.spreadsheetImages = [
       spreadsheetImg1,
       spreadsheetImg2,
-      spreadsheetImg3,
-      spreadsheetImg4
+      spreadsheetImg3
     ]
 
     this.oauthSignIn = () => {
@@ -86,7 +83,7 @@ class Landing extends Component {
     const { index } = this.state
     return <div style={styles.container}>
       <div style={styles.subheader}>
-        Text yourself questions on a regular basis<br />and save the answers in a Google Spreadsheet.
+        Text yourself questions on a regular basis and save the answers in a Google Spreadsheet.
       </div>
       <div style={styles.questionContainer}>
         <div style={styles.sampleQuestion}>
@@ -120,7 +117,9 @@ const styles = {
   },
   subheader: {
     fontSize: 24,
-    textAlign: 'center'
+    textAlign: 'center',
+    padding: 5,
+    maxWidth: 500
   },
   questionContainer: {
     display: 'flex',
@@ -130,11 +129,11 @@ const styles = {
   sampleQuestion: {
     marginTop: 40,
     marginBottom: 20,
-    fontSize: 24,
+    fontSize: 20,
     padding: 10,
     borderRadius: 7,
     borderTopRightRadius: 1,
-    width: 300,
+    width: 250,
     textAlign: 'center',
     backgroundColor: 'rgb(83, 175, 238)',
     fontFamily: 'Roboto'
@@ -147,7 +146,8 @@ const styles = {
     width: 80
   },
   spreadsheetImage: {
-    width: 700,
+    width: '90%',
+    maxWidth: 500,
     margin: 20
   },
   login: {
