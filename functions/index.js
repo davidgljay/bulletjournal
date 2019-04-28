@@ -15,8 +15,8 @@ const {
 exports.onUserCreate = functions.firestore.document('users/{userId}')
   .onCreate((snap, context) => googleAuth(snap.data(), snap.id, snap.ref))
 
-exports.onPubsubPublish = functions.pubsub.topic('tinyjournal_hourly')
-  .onPublish(() => checkForUsers(new Date().getUTCHours(), new Date().getUTCDay()))
+exports.onHour = functions.pubsub.schedule('every 1 hours synchronized')
+  .onRun(context => checkForUsers(new Date().getUTCHours(), new Date().getUTCDay()))
 
 exports.onUserUpdate = functions.firestore.document('users/{userId}')
   .onUpdate(change => Promise.all([
