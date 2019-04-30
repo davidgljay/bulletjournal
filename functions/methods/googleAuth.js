@@ -11,17 +11,17 @@ module.exports = (data, id, ref) => {
   url += `code=${data.code}&`
   url += `client_id=${functions.config().google.client_id}&`
   url += `client_secret=${functions.config().google.client_secret}&`
-  url += `redirect_uri=${encodeURIComponent('https://tinyjournal.us/auth')}&`
+  url += `redirect_uri=${encodeURIComponent('https://ed5b6e3e.ngrok.io/auth')}&`
   url += 'grant_type=authorization_code'
 
   return fetch(url, {method: 'POST'})
   .then(response => response.json())
   .then(json => {
-    ref.update({
-      id_token: json.id_token
-    })
     return db.collection('credentials').add(Object.assign({}, json, {userId}))
-      .then(cred => db.collection('users').doc(userId).update({credId: cred.id}))
+      .then(cred => db.collection('users').doc(userId).update({
+        credId: cred.id,
+        id_token: json.id_token
+      }))
   })
   .catch(err => console.log('An error occurred! ' + err))
 }
