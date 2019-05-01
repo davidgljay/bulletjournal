@@ -45,7 +45,8 @@ const styles = {
     width: '100%',
     display: 'flex',
     justifyContent: 'flex-end',
-    alignItems: 'center'
+    alignItems: 'center',
+    marginBottom: 20
   },
   logout: {
     cursor: 'pointer',

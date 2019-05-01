@@ -51,7 +51,7 @@ class Questions extends Component {
     firebase.firestore().collection('users').doc(userId).get()
       .then(user => {
         if (!user.exists) {
-          return
+          return null
         }
         this.setState({questions: user.data().questions || [''] })
       })
@@ -74,20 +74,17 @@ class Questions extends Component {
                 placeholder={hints[i]}
                 onChange={this.updateQuestion(i)}
                 style={styles.input}/>
-              {
-                i === questions.length - 1 &&
-                <Fab
-                  aria-label="Add"
-                  color='primary'
-                  size='small'
-                  style={styles.button}
-                  onClick={this.addQuestion}>
-                  <Icon style={styles.icon}>add</Icon>
-                </Fab>
-              }
             </div>
           })
       }
+      <Fab
+        aria-label="Add"
+        color='primary'
+        size='small'
+        style={styles.button}
+        onClick={this.addQuestion}>
+        <Icon style={styles.icon}>add</Icon>
+      </Fab>
       <div style={styles.text}>
         {
           posted ?
@@ -116,8 +113,9 @@ const styles = {
     display: 'flex',
     justifyContent: 'center',
     flexDirection: 'column',
-    alignItems: 'flex-start',
-    width: 370
+    alignItems: 'center',
+    width: '100%',
+    maxWidth: 370
   },
   questionContainer: {
     display: 'flex',
@@ -126,7 +124,7 @@ const styles = {
   input: {
     color: '#888',
     fontSize: 28,
-    width: 300
+    width: 332
   },
   button: {
     margin: 15,

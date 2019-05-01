@@ -37,7 +37,7 @@ class PhoneNumber extends Component {
       } else {
         this.setState({error: null})
       }
-      const regPhone = /([0-9]{3}).([0-9]{3}).([0-9]{4})/.exec(phone)
+      const regPhone = /([0-9]{3}).{0,1}([0-9]{3}).{0,1}([0-9]{4})/.exec(phone)
       const formattedPhone = `+1${regPhone[1]}${regPhone[2]}${regPhone[3]}`
       firebase.firestore().collection('users').doc(userId)
         .update({
@@ -51,7 +51,7 @@ class PhoneNumber extends Component {
       const phoneUnsub = firebase.firestore().collection('users').doc(userId)
         .onSnapshot(doc => {
           if (!doc.data()) {
-            return
+            return null
           }
           if (doc.data().phoneConfirmed) {
             this.setState({
@@ -68,7 +68,7 @@ class PhoneNumber extends Component {
     firebase.firestore().collection('users').doc(userId)
       .get().then(user => {
         if (!user.exists) {
-          return
+          return null
         }
         this.setState({
           phoneNumber: user.data().phone || ''
@@ -113,7 +113,8 @@ const styles = {
   inputContainer: {
     display: 'flex',
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
+    marginBottom: 20
   },
   input: {
     color: '#888',

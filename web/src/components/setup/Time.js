@@ -27,6 +27,18 @@ class Time extends Component {
       return { hour, day }
     }
 
+    this.fromUTC = (utcHour, utcDay) => {
+      const offset = new Date().getTimezoneOffset()/60
+      const hour = (utcHour - offset) % 24
+      let day = utcDay
+      if (hour + offset > 24) {
+        day = (day + 1) % 6
+      } else if (hour + offset < 0) {
+        day = (day - 1) % 6
+      }
+      return { hour, day }
+    }
+
     this.setDay = e => {
       const {userId} = this.props
       const {hour} = this.state
@@ -55,7 +67,7 @@ class Time extends Component {
         }
         const {day, hour} = user.data()
         if (day && hour) {
-          this.setState({day, hour})
+          this.setState(this.fromUTC(hour, day))
         } else {
           this.setDay({target: {value: 0}})
           this.setHour({target: {value: 19}})
@@ -123,7 +135,10 @@ const styles = {
   container: {
     display: 'flex',
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
+    flexFlow: 'wrap',
+    marginTop: 10,
+    marginBottom: 20
   },
   select: {
     margin: 10

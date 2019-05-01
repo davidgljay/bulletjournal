@@ -75,7 +75,7 @@ class App extends Component {
                   })
                   .then(() => anonymousUser.delete())
                   .then(() => firebase.auth().signInAndRetrieveDataWithCredential(credential))
-                  .then(() => firestore.collection('users').doc(firebase.auth().currentUser.uid).update(data))
+                  .then(() => firestore.collection('users').doc(firebase.auth().currentUser.uid).set(data))
               })
           })
       } else {
