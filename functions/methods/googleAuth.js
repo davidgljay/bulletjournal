@@ -11,7 +11,7 @@ module.exports = (data, id, ref) => {
   url += `code=${data.code}&`
   url += `client_id=${functions.config().google.client_id}&`
   url += `client_secret=${functions.config().google.client_secret}&`
-  url += `redirect_uri=${encodeURIComponent('https://ed5b6e3e.ngrok.io/auth')}&`
+  url += `redirect_uri=${encodeURIComponent('https://tinyjournal.us/auth')}&`
   url += 'grant_type=authorization_code'
 
   return fetch(url, {method: 'POST'})

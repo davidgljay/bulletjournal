@@ -35,8 +35,8 @@ exports.incomingSMS = functions.https.onRequest((req, res) => incomingSMS(req.bo
 )
 
 /* Tests */
-// exports.test = functions.https.onRequest((req, res) =>
-//   checkForUsers(3, 0)
-//   .then(r => res.send(r))
-//   .catch(e => res.status(500).send('' + e))
-// )
+exports.test = functions.https.onRequest((req, res) =>
+  checkForUsers(15, 3)
+  .then(r => res.send(r))
+  .catch(e => res.status(500).send('' + e))
+)

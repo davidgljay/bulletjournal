@@ -10,7 +10,7 @@ module.exports = ({questions, spreadsheetId, phone, credId, userId, row}, id, re
       return refreshTokenIfNeeded(appendItems([[getDate()]], 'A1', spreadsheetId))(credId, refresh_token, access_token)
     })
     .then(() => {
-      return db.collection('users').doc(userId).update({index: 0, row: row + 1})
+      return db.collection('users').doc(userId).update({index: 0, row: row ? row + 1 : 2 })
     })
     .then(() => sms(phone, questions[0]))
     .then(() => ref.delete())
