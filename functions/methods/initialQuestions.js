@@ -11,7 +11,7 @@ module.exports = (before, after, id) => {
   let spreadsheet
   let accessToken
   let refreshToken
-  if (before.questions.toString() !== after.questions.toString()) {
+  if (!before.questions || before.questions.toString() !== after.questions.toString()) {
     return db.collection('credentials').doc(before.credId).get()
       .then(credentials => {
         const {refresh_token, access_token} = credentials.data()
@@ -28,7 +28,7 @@ module.exports = (before, after, id) => {
       })
       .then(() => refreshTokenIfNeeded(appendItems([[getDate()].concat(questions)], 'A1', spreadsheet))(before.credId, refreshToken, accessToken))
       .then(([_, token]) => formatRow(0, spreadsheet)(token))
-      .then(() => sms(after.phone, 'You\'re all set up! ❤️📓 -Tiny Journal'))
+      .then(() => db.collection('queue').add(Object.assign({}, before, {userId: before.id})))
   }
   return null
 }
