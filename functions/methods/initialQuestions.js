@@ -4,9 +4,6 @@ const {getDate} = require('../date')
 const sms = require('../twilio')
 
 module.exports = (before, after, id) => {
-  if (!before.questions) {
-    return null
-  }
   const questions = after.questions
   let spreadsheet
   let accessToken
