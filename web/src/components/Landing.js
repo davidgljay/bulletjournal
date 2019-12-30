@@ -5,6 +5,7 @@ import phoneEmoji from '../assets/mobile-phone.png'
 import spreadsheetImg1 from '../assets/spreadsheet1.png'
 import spreadsheetImg2 from '../assets/spreadsheet2.png'
 import spreadsheetImg3 from '../assets/spreadsheet3.png'
+import {grey} from './colors'
 
 class Landing extends Component {
   constructor (props) {
@@ -83,13 +84,18 @@ class Landing extends Component {
     const { index } = this.state
     return <div style={styles.container}>
       <div style={styles.subheader}>
-        Text yourself questions on a regular basis and save the answers in a Google Spreadsheet.
+        Text yourself questions once a week.
+      </div>
+      <div style={styles.subheader}>
+        The answers are saved in a Google Sheet.
       </div>
       <div style={styles.questionContainer}>
         <div style={styles.sampleQuestion}>
           {
             this.sampleQuestions[index]
           }
+        </div>
+        <div style={styles.text}>
         </div>
         <img style={styles.phoneEmoji} src={phoneEmoji}/>
       </div>
@@ -102,6 +108,11 @@ class Landing extends Component {
         }
       </div>
       <div onClick={this.oauthSignIn}><img style={styles.login} src={googleLoginButton}/></div>
+      <div style={styles.text}>
+        I save your phone number and your questions, but none of your answers.<br />
+        I get permission to create and update a "Tiny Journal" sheet in your Google Drive.<br />
+        I can't see or touch anything else.
+      </div>
     </div>
   }
 }
@@ -153,5 +164,12 @@ const styles = {
   login: {
     width: 191,
     cursor: 'pointer'
-  }
+  },
+  text: {
+    color: grey,
+    fontSize: 14,
+    marginTop: 15,
+    textAlign: 'center',
+    lineHeight: '22px'
+  },
 }

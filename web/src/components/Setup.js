@@ -2,6 +2,7 @@ import React, {Component} from 'react'
 import PhoneNumber from './setup/PhoneNumber'
 import Questions from './setup/Questions'
 import Time from './setup/Time'
+import JournalLink from './setup/JournalLink'
 import Icon from '@material-ui/core/Icon'
 import firebase from 'firebase/app'
 import 'firebase/auth'
@@ -22,6 +23,7 @@ class Setup extends Component {
       <div style={styles.logoutContainer} >
         <div style={styles.logout} onClick={this.logout}>Log Out <Icon style={styles.logoutIcon}>logout</Icon></div>
       </div>
+      <JournalLink userId={userId} />
       <Time userId={userId} />
       <PhoneNumber userId={userId} />
       <Questions userId={userId} />
