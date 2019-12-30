@@ -10,19 +10,25 @@ class JournalLink extends Component {
     super(props);
 
     this.state = {
-      spreadsheetId: null
+      spreadsheetId: null,
+      unsubscribe: () => {}
     };
   }
 
   componentWillMount() {
     const {userId} = this.props
-    firebase.firestore().collection('users').doc(userId).on('value')
-      .then(user => {
+    const unsubscribe = firebase.firestore().collection('users').doc(userId)
+      .onSnapshot(user => {
         if (!user.exists) {
           return null
         }
-        this.setState({spreadsheetId: user.val().spreadsheetId })
+        this.setState({spreadsheetId: user.data().spreadsheetId })
       })
+    this.setState({unsubscribe})
+  }
+
+  componentWillUnmount() {
+    this.state.unsubscribe()
   }
 
   render () {
@@ -31,8 +37,8 @@ class JournalLink extends Component {
       {
         spreadsheetId &&
         <div style={styles.inputContainer}>
-          <h2 style={{color: green}}>
-            <a href={`https://docs.google.com/spreadsheets/d/${spreadsheetId}`}>
+          <h2>
+            <a style={{color: green}} href={`https://docs.google.com/spreadsheets/d/${spreadsheetId}`}>
               Your Tiny Journal
             </a>
           </h2>
