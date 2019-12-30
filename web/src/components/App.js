@@ -63,7 +63,7 @@ class App extends Component {
             }
 
             const credential = firebase.auth.GoogleAuthProvider.credential(id_token)
-            return firebase.auth().currentUser.linkAndRetrieveDataWithCredential(credential)
+            return firebase.auth().currentUser.linkWithCredential(credential)
               .then(unsubscribe)
               .catch(() => {
                 let data

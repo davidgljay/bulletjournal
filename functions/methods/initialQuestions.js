@@ -4,11 +4,14 @@ const {getDate} = require('../date')
 const sms = require('../twilio')
 
 module.exports = (before, after, id) => {
+  if (!after.questions) {
+    return null
+  }
   const questions = after.questions
   let spreadsheet
   let accessToken
   let refreshToken
-  if (!before.questions || before.questions.toString() !== after.questions.toString()) {
+  if (!before.questions || before.questions.length === 0 || before.questions.toString() !== after.questions.toString()) {
     return db.collection('credentials').doc(before.credId).get()
       .then(credentials => {
         const {refresh_token, access_token} = credentials.data()
