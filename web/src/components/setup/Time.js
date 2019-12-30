@@ -19,7 +19,9 @@ class Time extends Component {
       const offset = new Date().getTimezoneOffset()/60
       const hour = (localHour + offset) % 23
       let day = localDay
-      if (localHour + offset > 23) {
+      if (localDay === -1) {
+        return { hour, day }
+      } else if (localHour + offset > 23) {
         day = (day + 1) % 6
       } else if (localHour + offset < 0) {
         day = (day - 1) % 6
@@ -31,7 +33,9 @@ class Time extends Component {
       const offset = new Date().getTimezoneOffset()/60
       const hour = (utcHour - offset) % 23
       let day = utcDay
-      if (utcHour - offset > 23) {
+      if (utcDay === -1) {
+        return { hour, day }
+      } else if (utcHour - offset > 23) {
         day = (day + 1) % 6
       } else if (utcHour - offset < 0) {
         day = (day - 1) % 6
