@@ -53,12 +53,12 @@ class Questions extends Component {
         if (!user.exists) {
           return null
         }
-        this.setState({questions: user.data().questions || [''] })
+        this.setState({questions: user.data().questions || [''], spreadsheetId: user.data().spreadsheetId })
       })
   }
 
   render () {
-    const {questions, hints, posted} = this.state
+    const {questions, hints, posted, spreadsheetId} = this.state
 
     return <div style={styles.inputContainer}>
       {
@@ -102,6 +102,16 @@ class Questions extends Component {
           Done
         </Button>
       }
+      <div>
+        {
+          spreadsheetId &&
+          <h3>
+            <a href={`https://docs.google.com/spreadsheets/d/${spreadsheetId}`}>
+              Your Tiny Journal
+            </a>
+          </h3>
+        }
+      </div>
     </div>
   }
 }
