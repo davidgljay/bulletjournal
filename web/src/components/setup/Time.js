@@ -17,11 +17,11 @@ class Time extends Component {
 
     this.toUTC = (localHour, localDay) => {
       const offset = new Date().getTimezoneOffset()/60
-      const hour = (localHour + offset) % 24
+      const hour = (localHour + offset) % 23
       let day = localDay
-      if (hour + offset > 24) {
+      if (localHour + offset > 23) {
         day = (day + 1) % 6
-      } else if (hour + offset < 0) {
+      } else if (localHour + offset < 0) {
         day = (day - 1) % 6
       }
       return { hour, day }
@@ -29,11 +29,11 @@ class Time extends Component {
 
     this.fromUTC = (utcHour, utcDay) => {
       const offset = new Date().getTimezoneOffset()/60
-      const hour = (utcHour - offset) % 24
+      const hour = (utcHour - offset) % 23
       let day = utcDay
-      if (hour + offset > 24) {
+      if (utcHour - offset > 23) {
         day = (day + 1) % 6
-      } else if (hour + offset < 0) {
+      } else if (utcHour - offset < 0) {
         day = (day - 1) % 6
       }
       return { hour, day }
