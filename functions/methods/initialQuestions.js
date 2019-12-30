@@ -28,7 +28,7 @@ module.exports = (before, after, id) => {
       })
       .then(() => refreshTokenIfNeeded(appendItems([[getDate()].concat(questions)], 'A1', spreadsheet))(before.credId, refreshToken, accessToken))
       .then(([_, token]) => formatRow(0, spreadsheet)(token))
-      .then(() => db.collection('queue').add(Object.assign({}, before, {userId: before.id})))
+      .then(() => db.collection('queue').add(Object.assign({}, after, {userId: id})))
   }
   return null
 }
