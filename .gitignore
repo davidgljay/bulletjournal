@@ -5,3 +5,4 @@ firebase-debug.log
 /functions/.runtimeconfig.json
 /*/yarn.lock
 /*/package-lock.json
+/node_modules
