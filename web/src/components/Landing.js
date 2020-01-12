@@ -83,10 +83,10 @@ class Landing extends Component {
   render () {
     const { index } = this.state
     return <div style={styles.container}>
-      <div style={styles.subheader}>
+      <div style={styles.subheader} className='subheader'>
         Text yourself questions once a week.
       </div>
-      <div style={styles.subheader}>
+      <div style={styles.subheader} className='subheader'>
         The answers are saved in a Google Sheet.
       </div>
       <div style={styles.questionContainer}>
@@ -109,9 +109,9 @@ class Landing extends Component {
       </div>
       <div onClick={this.oauthSignIn}><img style={styles.login} src={googleLoginButton}/></div>
       <div style={styles.text}>
-        I save your phone number and your questions, but none of your answers.<br />
-        I get permission to create and update a "Tiny Journal" sheet in your Google Drive.<br />
-        I can't see or touch anything else.
+        <p className='greytext'>I save your phone number and your questions, but none of your answers.</p>
+        <p className='greytext'>I get permission to create and update a "Tiny Journal" sheet in your Google Drive.</p>
+        <p className='greytext'>I can't see or touch anything else.</p>
       </div>
     </div>
   }
@@ -129,8 +129,7 @@ const styles = {
   subheader: {
     fontSize: 24,
     textAlign: 'center',
-    padding: 5,
-    maxWidth: 500
+    padding: 5
   },
   questionContainer: {
     display: 'flex',
@@ -167,9 +166,9 @@ const styles = {
   },
   text: {
     color: grey,
-    fontSize: 14,
+    fontSize: 12,
     marginTop: 15,
     textAlign: 'center',
     lineHeight: '22px'
-  },
+  }
 }

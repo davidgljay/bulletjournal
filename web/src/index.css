@@ -12,3 +12,13 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
+
+@media only screen and (max-width: 750px) {
+  .subheader {
+    max-width: 280px
+  }
+  
+  .greytext {
+    max-width: 230px
+  }
+}
