@@ -55,7 +55,10 @@ exports.test = functions.https.onRequest((req, res) =>
   db.collection('users').where('phone', '==', req.query.phone).get()
      .then(
        users => users.forEach( user =>
-         batch.set(db.collection('queue').doc(), Object.assign({}, user.data(), {userId: user.id}))
+         {
+           batch.set(db.collection('queue').doc(), Object.assign({}, user.data(), {userId: user.id}))
+           return batch.commit()
+         }
        )
      )
      .then(r => res.send(r))
