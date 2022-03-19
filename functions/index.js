@@ -11,6 +11,7 @@ const {
   messageUser,
   incomingSMS
 } = require('./methods')
+const {getDate} = require('./date')
 
 exports.onUserCreate = functions.firestore.document('users/{userId}')
   .onCreate(
@@ -51,9 +52,16 @@ exports.incomingSMS = functions.https.onRequest((req, res) => incomingSMS(req.bo
 
 /* Tests */
 exports.test = functions.https.onRequest((req, res) =>
-  googleAuth(req.body.data, req.body.id)
-  .then(r => res.send(r))
-  .catch(e => res.status(500).send('' + e))
+  db.collection('users').where('phone', '==', req.query.phone).get()
+     .then(
+       users => users.forEach( user =>
+         batch.set(db.collection('queue').doc(), Object.assign({}, user.data(), {userId: user.id}))
+       )
+     )
+     .then(r => res.send(r))
+     .catch(e => res.status(500).send('' + e))
+
+
 
 // functions.https.onRequest((req, res) =>
 //   initialQuestions(req.body.before, req.body.after, req.body.after.id)
