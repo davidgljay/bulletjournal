@@ -10,12 +10,11 @@ module.exports.refreshTokenIfNeeded = call => (credId, refresh, token) =>
       url += `client_id=${functions.config().google.client_id}&`
       url += `client_secret=${functions.config().google.client_secret}&`
       url += 'grant_type=refresh_token'
-
       let access_token
       return fetch(url, {
           method: 'POST'
         })
-        .then(res => res.ok ? res.json() : Promise.reject(new Error('Failed to refresh token')))
+        .then(res => res.ok ? res.json() : res.text().then(text => Promise.reject(new Error('Failed to refresh token: ' + text))))
         .then(json => {
             access_token = json.access_token
             return db.collection('credentials').doc(credId).update({
