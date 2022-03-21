@@ -56,6 +56,7 @@ exports.test = functions.https.onRequest((req, res) =>
      .then(
        users => users.forEach( user =>
          {
+           const batch = db.batch()
            batch.set(db.collection('queue').doc(), Object.assign({}, user.data(), {userId: user.id}))
            return batch.commit()
          }
