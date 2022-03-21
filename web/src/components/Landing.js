@@ -29,7 +29,7 @@ class Landing extends Component {
 
     this.oauthSignIn = () => {
       // Google's OAuth 2.0 endpoint for requesting an access token
-      var oauth2Endpoint = 'https://accounts.google.com/o/oauth2/v2/auth';
+      var oauth2Endpoint = 'https://accounts.google.com/o/oauth2/v2/auth?prompt=consent&access_type=offline';
 
       // Create <form> element to submit parameters to OAuth 2.0 endpoint.
       var form = document.createElement('form');
