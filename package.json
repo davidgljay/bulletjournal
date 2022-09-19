@@ -10,5 +10,8 @@
   "license": "ISC",
   "dependencies": {
     "firebase-functions": "^3.19.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.23.1"
   }
 }
