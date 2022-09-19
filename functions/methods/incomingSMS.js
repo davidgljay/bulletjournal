@@ -13,7 +13,7 @@ module.exports = (body, res) => {
         case 'stop':
           return db.collection('users').doc(user.id).update({disabled: true})
         case 'go':
-          return db.collection('queue').add(Object.assign({}, user.data(), {userId: user.id})))
+          return db.collection('queue').add(Object.assign({}, user.data(), {userId: user.id}))
         default:
           return questionResponse(user.data(), user.id)
       }
