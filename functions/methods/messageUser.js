@@ -6,7 +6,7 @@ const sms = require('../twilio')
 module.exports = ({questions, spreadsheetId, phone, credId, userId, row}, id, ref) => {
   return db.collection('credentials').doc(credId).get()
     .then(credentials => {
-      const {refresh_token, access_token} = credentials.data()
+      const {refresh_token, access_token} = credentials.val()
       return refreshTokenIfNeeded(appendItems([[getDate()]], 'A1', spreadsheetId))(credId, refresh_token, access_token)
     })
     .then(() => {

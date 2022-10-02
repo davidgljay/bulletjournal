@@ -8,10 +8,10 @@ module.exports = (hour, day) => {
     .then(([weeklyUsers, dailyUsers]) => {
       const batch = db.batch()
       if (!weeklyUsers.empty) {
-        weeklyUsers.forEach(user => batch.set(db.collection('queue').doc(), Object.assign({}, user.data(), {userId: user.id})))
+        weeklyUsers.forEach(user => batch.set(db.collection('queue').doc(), Object.assign({}, user.val(), {userId: user.id})))
       }
       if (!dailyUsers.empty) {
-        dailyUsers.forEach(user => batch.set(db.collection('queue').doc(),  Object.assign({}, user.data(), {userId: user.id})))
+        dailyUsers.forEach(user => batch.set(db.collection('queue').doc(),  Object.assign({}, user.val(), {userId: user.id})))
       }
       return batch.commit()
     })

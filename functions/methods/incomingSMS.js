@@ -13,9 +13,9 @@ module.exports = (body, res) => {
         case 'stop':
           return db.collection('users').doc(user.id).update({disabled: true})
         case 'go':
-          return db.collection('queue').add(Object.assign({}, user.data(), {userId: user.id}))
+          return db.collection('queue').add(Object.assign({}, user.val(), {userId: user.id}))
         default:
-          return questionResponse(user.data(), user.id)
+          return questionResponse(user.val(), user.id)
       }
     })
   )
@@ -29,7 +29,7 @@ const questionResponse = (text, phone, user, userId) => {
   const range = String.fromCharCode(98 + index).toUpperCase() + row + ':' + String.fromCharCode(98 + index).toUpperCase() + row
   return db.collection('credentials').doc(user.credId).get()
     .then(credentials => {
-      const {access_token, refresh_token} = credentials.data()
+      const {access_token, refresh_token} = credentials.val()
       return refreshTokenIfNeeded(appendItems([[text]], range, user.spreadsheetId))(user.credId, refresh_token, access_token)
     })
     .then(() => {

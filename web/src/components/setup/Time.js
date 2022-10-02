@@ -69,7 +69,7 @@ class Time extends Component {
         if (!user.exists) {
           return
         }
-        const {day, hour} = user.data()
+        const {day, hour} = user.val()
         if (day && hour) {
           this.setState(this.fromUTC(hour, day))
         } else {

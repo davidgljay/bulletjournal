@@ -54,10 +54,10 @@ class App extends Component {
         // Once an id_token has been retreived, use it to authenticate the user
         const unsubscribe = firestore.collection('users').doc(user.uid)
           .onSnapshot(doc => {
-            if (!doc.data()) {
+            if (!doc.val()) {
               return
             }
-            const id_token = doc.data().id_token
+            const id_token = doc.val().id_token
             if (!id_token) {
               return
             }
@@ -70,7 +70,7 @@ class App extends Component {
                 const anonymousUser = firebase.auth().currentUser
                 return firestore.collection('users').doc(anonymousUser.uid).get()
                   .then(snapshot => {
-                    data = snapshot.data()
+                    data = snapshot.val()
                     return firestore.collection('users').doc(anonymousUser.uid).delete()
                   })
                   .then(() => anonymousUser.delete())

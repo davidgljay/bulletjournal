@@ -53,7 +53,7 @@ class Questions extends Component {
         if (!user.exists) {
           return null
         }
-        this.setState({questions: user.data().questions || [''], spreadsheetId: user.data().spreadsheetId })
+        this.setState({questions: user.val().questions || [''], spreadsheetId: user.val().spreadsheetId })
       })
   }
 

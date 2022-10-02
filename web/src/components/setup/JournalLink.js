@@ -22,7 +22,7 @@ class JournalLink extends Component {
         if (!user.exists) {
           return null
         }
-        this.setState({spreadsheetId: user.data().spreadsheetId })
+        this.setState({spreadsheetId: user.val().spreadsheetId })
       })
     this.setState({unsubscribe})
   }

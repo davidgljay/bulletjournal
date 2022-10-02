@@ -50,10 +50,10 @@ class PhoneNumber extends Component {
       })
       const phoneUnsub = firebase.firestore().collection('users').doc(userId)
         .onSnapshot(doc => {
-          if (!doc.data()) {
+          if (!doc.val()) {
             return null
           }
-          if (doc.data().phoneConfirmed) {
+          if (doc.val().phoneConfirmed) {
             this.setState({
               confirmation: 'confirmed'
             })
@@ -71,7 +71,7 @@ class PhoneNumber extends Component {
           return null
         }
         this.setState({
-          phoneNumber: user.data().phone || ''
+          phoneNumber: user.val().phone || ''
         })
       })
   }

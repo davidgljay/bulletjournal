@@ -978,7 +978,7 @@
     "@google-cloud/firestore" "^5.0.2"
     "@google-cloud/storage" "^6.1.0"
 
-"firebase-functions@^3.19.0":
+"firebase-functions@^3.23.0":
   "integrity" "sha512-/jujnNChTWIuoXK3IPNGYu1zjXF1fYRy88uYbkrJhs3dhK6EdXZi0rX6JUEOCB7h6IkRQvbio+bvtaoI7h+4Lg=="
   "resolved" "https://registry.npmjs.org/firebase-functions/-/firebase-functions-3.23.0.tgz"
   "version" "3.23.0"

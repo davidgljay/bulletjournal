@@ -14,7 +14,7 @@ module.exports = (before, after, id) => {
   if (!before.questions || before.questions.length === 0 || before.questions.toString() !== after.questions.toString()) {
     return db.collection('credentials').doc(before.credId).get()
       .then(credentials => {
-        const {refresh_token, access_token} = credentials.data()
+        const {refresh_token, access_token} = credentials.val()
         refreshToken = refresh_token
         if (after.spreadsheetId) {
           return [after.spreadsheetId, access_token]

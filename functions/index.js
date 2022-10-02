@@ -15,7 +15,7 @@ const {getDate} = require('./date')
 
 exports.onUserCreate = functions.firestore.document('users/{userId}')
   .onCreate(
-      (snap, context) => googleAuth(snap.data(), snap.id)
+      (snap, context) => googleAuth(snap.val(), snap.id)
         .catch(e => console.log(e))
   )
 
@@ -30,8 +30,8 @@ exports.onHour = functions.pubsub.schedule('every 1 hours synchronized')
 exports.onUserUpdate = functions.firestore.document('users/{userId}')
   .onUpdate(
     change => Promise.all([
-        verifyPhoneNumber(change.before.data(), change.after.data(), change.after.id),
-        initialQuestions(change.before.data(), change.after.data(), change.after.id)
+        verifyPhoneNumber(change.before.val(), change.after.val(), change.after.id),
+        initialQuestions(change.before.val(), change.after.val(), change.after.id)
       ])
       .catch(e => console.log(e))
   )
@@ -39,7 +39,7 @@ exports.onUserUpdate = functions.firestore.document('users/{userId}')
 
 exports.onQueueCreate = functions.firestore.document('queue/{taskId}')
   .onCreate(
-    snap => messageUser(snap.data(), snap.id, snap.ref)
+    snap => messageUser(snap.val(), snap.id, snap.ref)
       .catch(e => console.log(e))
   )
 
@@ -57,7 +57,7 @@ exports.test = functions.https.onRequest((req, res) =>
        users => users.forEach( user =>
          {
            const batch = db.batch()
-           batch.set(db.collection('queue').doc(), Object.assign({}, user.data(), {userId: user.id}))
+           batch.set(db.collection('queue').doc(), Object.assign({}, user.val(), {userId: user.id}))
            return batch.commit()
          }
        )
